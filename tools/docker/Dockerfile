@@ -66,7 +66,7 @@ ADD scripts/start-services.sh /usr/local/bin/start-services
 RUN chmod +x /usr/local/bin/start-services
 
 ### PORTS to expose ###
-EXPOSE 22 80
+EXPOSE 22 80 3306
 
 # entrypoint
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]
