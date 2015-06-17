@@ -48,7 +48,7 @@ else
 
     # copy directories to the shared folders
     if [[ ! -d "${MOODLE_WWW}" ]]; then
-        scp -r -P${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP}:/var/www/html/moodle ${MOODLE_WWW}
+        scp -r -P${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP}:/opt/moodle ${MOODLE_WWW}
         scp -r -P${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP}:/data/moodle ${MOODLE_DATA}
         scp -r -P${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP}:/var/lib/mysql/mysql ${MYSQL_DATA_DIR}
 
@@ -61,7 +61,7 @@ fi
 
 
 # Start the container
-docker run -d -p ${CONTAINER_SSH_PORT}:22 -p 4789:80 \
+docker run -d -p ${CONTAINER_SSH_PORT}:22 -p 4789:80 -p 4306:3306 \
     -v ${WWW_DIR}:/var/www/html -v ${DATA_DIR}:/data \
     -v ${MOODLE_DATA}:/data/moodle \
     -v ${MYSQL_DATA_DIR}:/var/lib/mysql \
