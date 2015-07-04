@@ -2,13 +2,14 @@
 
 if [[ "$@" -eq 1 ]]; then
 	BASEDIR="$1"
-elif [[ -n ${MOODLE_DOCKER_DIR} ]]; then
-	BASEDIR=${MOODLE_DOCKER_DIR}
+elif [[ -n ${BASE_MOODLE_DOCKER_DIR} ]]; then
+	BASEDIR=${BASE_MOODLE_DOCKER_DIR}
 else
 	BASEDIR="${HOME}/Sharing/MoodleDocker"
 fi
 
 # Global settings
+BASE_MOODLE_DOCKER_DIR=${BASE_DIR}
 CONTAINER_NAME="moodle_ome"
 WWW_DIR="${BASEDIR}/www"
 DATA_DIR="${BASEDIR}/data"
@@ -30,7 +31,12 @@ mkdir -p ${DATA_DIR}
 mkdir -p ${MOODLE_DATA}
 mkdir -p ${MYSQL_DATA_DIR}
 
+# env to export
+export BASE_MOODLE_DOCKER_DIR
+export MOODLE_WWW
+export MOODLE_DATA
 
+# utility function
 function wait_for_ssh {
     SSH_EXIT_STATUS=255
     while [[ $SSH_EXIT_STATUS -eq 255 ]];do
