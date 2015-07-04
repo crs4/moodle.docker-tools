@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
+if [[ "$@" -eq 1 ]]; then
+	BASEDIR="$1"
+elif [[ -n ${MOODLE_DOCKER_DIR} ]]; then
+	BASEDIR=${MOODLE_DOCKER_DIR}
+else
+	BASEDIR="${HOME}/Sharing/MoodleDocker"
+fi
+
 # Global settings
 CONTAINER_NAME="moodle_ome"
-BASEDIR="$(pwd)/Sharing"
 WWW_DIR="${BASEDIR}/www"
 DATA_DIR="${BASEDIR}/data"
 CONTAINER_SSH_PORT=4376
