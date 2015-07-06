@@ -46,6 +46,9 @@ function wait_for_ssh {
     done
 }
 
+# SSH key
+SSH_KEY=$(ls ~/.ssh/id_dsa.pub || ls ~/.ssh/id_rsa.pub)
+
 # Check whehter the Shared Moodle Folders exist
 if [[ -d "${WWW_DIR}/moodle" ]]; then
     echo "Shared Moodle exists @ ${WWW_DIR}"
@@ -57,7 +60,7 @@ else
     wait_for_ssh
 
     echo "Copying key..."
-    cat ~/.ssh/id_dsa.pub | ssh -p ${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP} "cat > .ssh/authorized_keys"
+    cat ${SSH_KEY} | ssh -p ${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP} "cat > .ssh/authorized_keys"
 
     # copy directories to the shared folders
     if [[ ! -d "${MOODLE_WWW}" ]]; then
@@ -84,7 +87,7 @@ docker run -d -p ${CONTAINER_SSH_PORT}:22 -p 4789:80 -p 4306:3306 \
 wait_for_ssh
 
 echo "Copying key..."
-cat ~/.ssh/id_dsa.pub | ssh -p ${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP} "cat > .ssh/authorized_keys"
+cat ${SSH_KEY} | ssh -p ${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP} "cat > .ssh/authorized_keys"
 
 # get the IP address
 CONTAINER_ADDRESS=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${CONTAINER_NAME})
