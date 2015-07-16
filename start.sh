@@ -66,7 +66,9 @@ if [[ -d "${WWW_DIR}/moodle" ]]; then
 else
     # start a temp container
     echo "Initializing Moodle (@${MOODLE_WWW}..."
-    docker run -d -p ${CONTAINER_SSH_PORT}:22 -p 4789:80 --name ${CONTAINER_NAME} moodle
+    docker run -d -p ${CONTAINER_SSH_PORT}:22 -p 4789:80 \
+			-v ${MYSQL_DATA_DIR}:/var/lib/mysql \
+			--name ${CONTAINER_NAME} moodle
     # Wait for ssh
     wait_for_ssh
 
@@ -77,9 +79,9 @@ else
     if [[ ! -d "${MOODLE_WWW}" ]]; then
         scp -r -P${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP}:/opt/moodle ${MOODLE_WWW}
         scp -r -P${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP}:/data/moodle ${MOODLE_DATA}
-        scp -r -P${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP}:/var/lib/mysql/mysql ${MYSQL_DATA_DIR}
 
-        chmod -R 777 ${MYSQL_DATA_DIR}
+        # Initialize the MySQL DB
+        ssh -p ${CONTAINER_SSH_PORT} root@${DOCKER_HOST_IP} "/usr/bin/mysql_install_db"
     fi
 
     # kill the temp container
