@@ -53,11 +53,11 @@ if [[ ! -f ${SSH_KEY} ]]; then
 fi
 
 # Determine the DOCKER_HOST_IP from the DOCKER_HOST env var:
-# if no DOCKER_HOST is setted, `hostname` is assumed as DOCKER_HOST
+# if no DOCKER_HOST is setted, 0.0.0.0 is assumed as DOCKER_HOST_IP
 if [[ -n ${DOCKER_HOST} ]]; then
 	DOCKER_HOST_IP=$(echo ${DOCKER_HOST} | grep -E -o "([0-9]+\.)+[0-9]+")
 else
-	DOCKER_HOST_IP=$(dig +short $(hostname))
+	DOCKER_HOST_IP=0.0.0.0
 fi
 
 # Check whehter the Shared Moodle Folders exist
