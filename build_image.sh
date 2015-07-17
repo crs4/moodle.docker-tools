@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-docker build -t moodle .
+# Build Moodle image
+docker build -t moodle images/moodle/
