@@ -2,4 +2,4 @@
 
 # Build Moodle image
 echo "Building the Moodle image..."
-docker build -t moodle .
+docker build -t crs4/apache-php-moodle .
