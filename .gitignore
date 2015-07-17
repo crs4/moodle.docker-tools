@@ -1,2 +1,4 @@
 .idea
-tools/docker/Sharing
+
+docker-compose.yml
+
