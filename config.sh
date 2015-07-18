@@ -16,7 +16,8 @@ export MYSQL_PASSWORD="moodle"
 export MYSQL_DATADIR="${SHARED_DATA}/mysql"
 
 # Moodle Configuration
-export MOODLE_WWW_ROOT="/var/www/html/moodle"
+export APACHE_WWW_ROOT="/var/www/html"
+export MOODLE_WWW_ROOT="${APACHE_WWW_ROOT}/moodle"
 export MOODLE_DATA_DIR="/data/moodle"
 export SHARED_MOODLE_WWW_ROOT="${SHARED_WWW}/moodle"
 export SHARED_MOODLE_DATA_DIR="${SHARED_DATA}/moodle"
