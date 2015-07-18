@@ -5,7 +5,7 @@ set -e
 # Download Moodle and deploy it to the MOODLE_WWW_ROOT
 if [[ ! "$(ls ${MOODLE_WWW_ROOT})" ]]; then
     echo "Copying Moodle ..."
-    cp -r -v /opt/moodle ${MOODLE_WWW_ROOT}
+    cp -r -v /opt/moodle ${WWW_ROOT}
 else
     echo "Moodle folder exists..."
 fi
