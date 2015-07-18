@@ -16,12 +16,14 @@ RUN apt-get -y install graphviz aspell php5-pspell php5-curl php5-gd php5-intl p
 # Update the PHP.ini file, enable <? ?> tags and quieten logging.
 RUN sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php5/apache2/php.ini
 
+# Path of the apache WWW root
+ENV WWW_ROOT /var/www/html
 
 ### Moodle Download and Setting ###
 
 # Moodle Env
 ENV MOODLE_VERSION MOODLE_29_STABLE
-ENV MOODLE_WWW_ROOT /var/www/html/moodle
+ENV MOODLE_WWW_ROOT ${WWW_ROOT}/moodle
 ENV MOODLE_DATA_DIR /data/moodle
 
 # Clone Moodle
