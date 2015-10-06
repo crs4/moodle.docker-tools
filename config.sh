@@ -31,6 +31,6 @@ SSH_KEY="${HOME}/.ssh/id_dsa.pub"
 if [[ ! -f ${SSH_KEY} ]]; then
 	SSH_KEY="${HOME}/.ssh/id_rsa.pub"
 fi
-
+export SSH_KEY_PATH=$SSH_KEY
 
 
