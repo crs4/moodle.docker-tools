@@ -1,0 +1,32 @@
+mysql:
+  #build: images/mysql
+  name: mysql-moodle
+  image: crs4/mysql-moodle
+  environment:
+    MYSQL_ROOT_PASSWORD: {{MYSQL_ROOT_PASSWORD}}
+    MYSQL_DATADIR: {{MYSQL_DATADIR}}
+    MYSQL_DATABASE: {{MYSQL_DATABASE}}
+    MYSQL_USER: {{MYSQL_USER}}
+    MYSQL_PASSWORD: {{MYSQL_PASSWORD}}
+  volumes:
+    - {{MYSQL_DATADIR}}:/var/lib/mysql
+  hostname: mysql
+  ports:
+    - "4306:3306"
+
+
+moodle:
+  #build: images/moodle
+  image: crs4/apache-php-moodle
+  environment:
+    SSH_KEY_PATH: {{SSH_KEY_PATH}}
+    SHARED_MOODLE_WWW_ROOT: {{SHARED_MOODLE_WWW_ROOT}}
+    SHARED_MOODLE_DATA_DIR: {{SHARED_MOODLE_DATA_DIR}}
+  volumes:
+    - {{SHARED_WWW}}:{{APACHE_WWW_ROOT}}
+    - {{SHARED_MOODLE_DATA_DIR}}:{{MOODLE_DATA_DIR}}
+  links:
+    - mysql
+  hostname: moodle
+  ports:
+    - "4789:80"
