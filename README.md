@@ -1,12 +1,12 @@
 # omero_moodle.docker
 
-Moodle Dockerization (for development).
+A Dockerized Moodle for development purposes.
 
 
 ### Usage
 
- - change config.sh if you need
+ - change config.sh as you need
  - run ./make-composition.sh to build the docker-compose.yml
  - run ./build-images.sh
  - run docker-compose up -d 
- - open a web browser at http://<YOUR_DOCKER_HOST>:4789/moodle and complete the Moodle installation following the instructions.
+ - open your browser, go to the page `http://<YOUR_DOCKER_HOST>:4789/moodle` and follow the Moodle instructions to complete the installation.
