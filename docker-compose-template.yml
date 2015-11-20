@@ -1,6 +1,6 @@
 mysql:
   #build: images/mysql
-  name: mysql-moodle
+  container_name: mysql-moodle
   image: crs4/mysql-moodle
   environment:
     MYSQL_ROOT_PASSWORD: {{MYSQL_ROOT_PASSWORD}}
