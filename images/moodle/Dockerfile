@@ -28,7 +28,7 @@ ENV MOODLE_DATA_DIR /data/moodle
 
 # Clone Moodle
 RUN cd /opt \
-    && git clone git://git.moodle.org/moodle.git \
+    && git clone https://github.com/moodle/moodle.git \
     && cd moodle \
     && git checkout ${MOODLE_VERSION}
 

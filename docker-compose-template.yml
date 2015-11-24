@@ -1,6 +1,6 @@
 mysql:
   #build: images/mysql
-  name: mysql-moodle
+  container_name: mysql-moodle
   image: crs4/mysql-moodle
   environment:
     MYSQL_ROOT_PASSWORD: {{MYSQL_ROOT_PASSWORD}}
@@ -25,6 +25,7 @@ moodle:
   volumes:
     - {{SHARED_WWW}}:{{APACHE_WWW_ROOT}}
     - {{SHARED_MOODLE_DATA_DIR}}:{{MOODLE_DATA_DIR}}
+    - {{SHARED_MOODLE_LOG_DIR}}:{{MOODLE_LOG_DIR}}
   links:
     - mysql
   hostname: moodle
