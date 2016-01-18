@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Base path for sharing between DOCKER Host and containers
-export SHARED_HOST_FOLDER="${HOME}/Sharing/MoodleDocker"
+export SHARED_HOST_FOLDER="${HOME}/Development/Environment/Cytest/Develop/MoodleDocker"
 
 # Shared www and data paths
 export SHARED_WWW="${SHARED_HOST_FOLDER}/www"
