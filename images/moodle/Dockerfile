@@ -19,6 +19,14 @@ RUN sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PA
 # Path of the apache WWW root
 ENV WWW_ROOT /var/www/html
 
+# enable HTTPS
+RUN a2enmod ssl
+RUN a2ensite default-ssl.conf
+
+# copy certificates
+COPY certs/apache.key /etc/apache2/ssl/apache.key
+COPY certs/apache.crt /etc/apache2/ssl/apache.crt
+
 ### Moodle Download and Setting ###
 
 # Moodle Env
@@ -43,7 +51,7 @@ ADD scripts/start-services.sh /usr/local/bin/start-services
 RUN chmod +x /usr/local/bin/start-services
 
 ### PORTS to expose ###
-EXPOSE 80
+EXPOSE 80 443
 
 ### ENTRYPOINT ##
 CMD ["start-services"]
