@@ -3,7 +3,7 @@
 # paths
 CURRENT_DIR=$(pwd)
 MOODLE_PACKAGES_FOLDER=/tmp/moodle-packages # temp folder where Moodle packages are downloaded
-export MOODLE_WWW=/Users/kikkomep/Development/Environment/Cytest/Develop/MoodleDocker/www/moodle
+export MOODLE_WWW=$(source config.sh && echo ${SHARED_MOODLE_WWW_ROOT};)
 
 # github settings
 GITHUB_USER="kikkomep"
