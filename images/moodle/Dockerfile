@@ -52,6 +52,9 @@ RUN cd /opt/moodle \
   && npm install grunt-contrib-watch --save-dev \
   && npm install shifter --save-dev
 
+# set user permissions
+RUN usermod -u 1000 www-data
+
 # Init Moodle dirs
 RUN mkdir -p ${MOODLE_DATA_DIR}
 RUN chown -R www-data ${MOODLE_DATA_DIR}
