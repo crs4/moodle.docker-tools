@@ -35,7 +35,7 @@ COPY certs/apache.crt /etc/apache2/ssl/apache.crt
 # Moodle Env
 ENV MOODLE_VERSION MOODLE_29_STABLE
 ENV MOODLE_WWW_ROOT ${WWW_ROOT}/moodle
-ENV MOODLE_DATA_DIR /data/moodle
+ENV MOODLE_DATA_DIR /var/www/moodledata
 
 # Clone Moodle
 RUN cd /opt \
