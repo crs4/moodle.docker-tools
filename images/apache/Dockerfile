@@ -6,12 +6,16 @@ ENV DEBIAN_FRONTEND noninteractive
 # Update
 RUN apt-get update
 
-# Install Apache/MySQL/PHP
-RUN apt-get -y install apache2 mysql-client php5 git-core nodejs-legacy npm
-RUN echo "ServerName localhost" >>  /etc/apache2/apache2.conf
+# Install Apache/MySQL/PHP and additional Software
+RUN apt-get update \
+    && apt-get -y install \
+       apache2 mysql-client php5 git-core nodejs-legacy npm \
+       graphviz aspell php5-pspell \
+       php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap clamav \
+    && apt-get clean
 
-# Install Additional Software
-RUN apt-get -y install graphviz aspell php5-pspell php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap clamav
+# update apache configuration
+RUN echo "ServerName localhost" >>  /etc/apache2/apache2.conf
 
 # Install GRUNT plugins
 RUN npm install -g grunt-cli
@@ -63,6 +67,9 @@ RUN chmod -R 777 ${MOODLE_DATA_DIR}
 ### Global scripts ###
 ADD scripts/start-services.sh /usr/local/bin/start-services
 RUN chmod +x /usr/local/bin/start-services
+
+# set timezone
+RUN echo Europe/Rome > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 # Set VOLUMEs to persist MOODLE instance and its data
 VOLUME ${WWW_ROOT}
