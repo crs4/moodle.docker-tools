@@ -28,4 +28,5 @@ moodle:
     - mysql
   hostname: moodle
   ports:
-    - "4789:80"
+    - "80:80"
+    - "443:443"
