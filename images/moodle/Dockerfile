@@ -60,10 +60,13 @@ RUN mkdir -p ${MOODLE_DATA_DIR}
 RUN chown -R www-data ${MOODLE_DATA_DIR}
 RUN chmod -R 777 ${MOODLE_DATA_DIR}
 
-
 ### Global scripts ###
 ADD scripts/start-services.sh /usr/local/bin/start-services
 RUN chmod +x /usr/local/bin/start-services
+
+# Set VOLUMEs to persist MOODLE instance and its data
+VOLUME ${WWW_ROOT}
+VOLUME ${MOODLE_DATA_DIR}
 
 ### PORTS to expose ###
 EXPOSE 80 443
