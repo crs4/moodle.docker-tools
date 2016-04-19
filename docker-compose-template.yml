@@ -7,6 +7,8 @@ mysql:
     MYSQL_DATABASE: {{MYSQL_DATABASE}}
     MYSQL_USER: {{MYSQL_USER}}
     MYSQL_PASSWORD: {{MYSQL_PASSWORD}}
+  volumes:
+    - {{DOCKER_VOLUME_PREFIX}}mysql-data:{{MYSQL_DATADIR}}
   hostname: mysql
   ports:
     - "4306:3306"
@@ -22,13 +24,14 @@ apache:
   volumes:
     # uncomment to store data in a local shared folder
     - {{SHARED_WWW}}:{{APACHE_WWW_ROOT}}
-    #- {{SHARED_MOODLE_DATA_DIR}}:{{MOODLE_DATA_DIR}}
-    #- {{SHARED_MOODLE_LOG_DIR}}:{{MOODLE_LOG_DIR}}
+    - {{DOCKER_VOLUME_PREFIX}}moodle-data:{{MOODLE_DATA_DIR}}
+    - {{DOCKER_VOLUME_PREFIX}}moodle-logs:{{MOODLE_LOG_DIR}}
+  hostname: moodle
   links:
     - mysql
-  hostname: moodle
   ports:
     - "80:80"
     - "443:443"
   dns:
     - 8.8.8.8
+    # add other DNS if you need
