@@ -7,7 +7,7 @@ export MOODLE_WWW=$(source config.sh && echo ${SHARED_MOODLE_WWW_ROOT};)
 
 # github settings
 GITHUB_USER="kikkomep"
-BRANCH="inst-update"
+BRANCH="develop"
 USE_SSH=true
 PRESERVE_HISTORY=true
 
