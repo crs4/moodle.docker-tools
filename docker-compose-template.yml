@@ -12,7 +12,6 @@ mysql:
   ports:
     - "4306:3306"
 
-
 moodle:
   #build: images/moodle
   image: crs4/apache-php-moodle
@@ -21,9 +20,10 @@ moodle:
     SHARED_MOODLE_WWW_ROOT: {{SHARED_MOODLE_WWW_ROOT}}
     SHARED_MOODLE_DATA_DIR: {{SHARED_MOODLE_DATA_DIR}}
   volumes:
+    # uncomment to store data in a local shared folder
     - {{SHARED_WWW}}:{{APACHE_WWW_ROOT}}
-    - {{SHARED_MOODLE_DATA_DIR}}:{{MOODLE_DATA_DIR}}
-    - {{SHARED_MOODLE_LOG_DIR}}:{{MOODLE_LOG_DIR}}
+    #- {{SHARED_MOODLE_DATA_DIR}}:{{MOODLE_DATA_DIR}}
+    #- {{SHARED_MOODLE_LOG_DIR}}:{{MOODLE_LOG_DIR}}
   links:
     - mysql
   hostname: moodle
