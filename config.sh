@@ -38,3 +38,9 @@ if [[ ! -f ${SSH_KEY} ]]; then
 	SSH_KEY="${HOME}/.ssh/id_rsa.pub"
 fi
 export SSH_KEY_PATH=$SSH_KEY
+
+# DOCKER IMAGE SETTINGS
+export DOCKER_VOLUME_PREFIX="moodle-docker-"
+export DOCKERHUB_REPOSITORY="crs4"
+export DOCKERHUB_MYSQL_IMAGE="moodle-mysql"
+export DOCKERHUB_APACHE_IMAGE="moodle-apache-php"
