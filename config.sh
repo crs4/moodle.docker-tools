@@ -20,7 +20,7 @@ export SHARED_MYSQL_DATADIR="${SHARED_DATA}/mysql"
 # Moodle Configuration
 export APACHE_WWW_ROOT="/var/www/html"
 export MOODLE_WWW_ROOT="${APACHE_WWW_ROOT}/moodle"
-export MOODLE_DATA_DIR="/data/moodle"
+export MOODLE_DATA_DIR="/var/www/moodledata"
 export MOODLE_LOG_DIR="/var/log/apache2"
 export SHARED_MOODLE_WWW_ROOT="${SHARED_WWW}/moodle"
 export SHARED_MOODLE_LOG_DIR="${SHARED_LOG}/moodle"
