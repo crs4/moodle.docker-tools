@@ -25,6 +25,9 @@ export SHARED_MOODLE_WWW_ROOT="${SHARED_WWW}/moodle"
 export SHARED_MOODLE_LOG_DIR="${SHARED_LOG}/moodle"
 export SHARED_MOODLE_DATA_DIR="${SHARED_DATA}/moodle"
 
+# certs Path
+export CERTS_PATH=images/moodle/certs
+
 # SSH service of the Moodle container # TODO: needed?
 CONTAINER_SSH_PORT=4376
 
@@ -34,5 +37,3 @@ if [[ ! -f ${SSH_KEY} ]]; then
 	SSH_KEY="${HOME}/.ssh/id_rsa.pub"
 fi
 export SSH_KEY_PATH=$SSH_KEY
-
-
