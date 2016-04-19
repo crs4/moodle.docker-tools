@@ -1,7 +1,6 @@
+# MySQL database
 mysql:
-  #build: images/mysql
-  container_name: mysql-moodle
-  image: crs4/mysql-moodle
+  image: {{DOCKERHUB_REPOSITORY}}/{{DOCKERHUB_MYSQL_IMAGE}}
   environment:
     MYSQL_ROOT_PASSWORD: {{MYSQL_ROOT_PASSWORD}}
     MYSQL_DATADIR: {{MYSQL_DATADIR}}
@@ -12,9 +11,10 @@ mysql:
   ports:
     - "4306:3306"
 
-moodle:
-  #build: images/moodle
-  image: crs4/apache-php-moodle
+
+# apache web server with PHP and grunt installed
+apache:
+  image: {{DOCKERHUB_REPOSITORY}}/{{DOCKERHUB_APACHE_IMAGE}}
   environment:
     SSH_KEY_PATH: {{SSH_KEY_PATH}}
     SHARED_MOODLE_WWW_ROOT: {{SHARED_MOODLE_WWW_ROOT}}

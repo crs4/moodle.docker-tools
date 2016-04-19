@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+DOCKERHUB_REPOSITORY=${1:-"crs4"}
+DOCKERHUB_IMAGE_NAME=${2:-"moodle-apache-php"}
+
 # Build Moodle image
 echo "Building the Moodle image..."
-docker build -t crs4/apache-php-moodle .
+docker build -t ${DOCKERHUB_REPOSITORY}/${DOCKERHUB_IMAGE_NAME} .

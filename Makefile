@@ -10,12 +10,12 @@ compose:
 build-images: build-certificates
 	# build the docker images
 	set -e; 													\
-	images=("mysql moodle"); 					\
-	images_path="$$(pwd)/images"; 		\
-	for image in $${images[@]}; do		\
-		cd "$${images_path}/$${image}"; \
-		"./build_image.sh"; 						\
-	done;
+	current_path=$$(pwd);							\
+	source config.sh;									\
+	cd $${current_path}/images/mysql  \
+		 && ./build_image.sh $${DOCKERHUB_REPOSITORY} $${DOCKERHUB_MYSQL_IMAGE}; \
+	cd $${current_path}/images/apache \
+		 && ./build_image.sh $${DOCKERHUB_REPOSITORY} $${DOCKERHUB_APACHE_IMAGE};
 
 build-certificates:
 	# build the required certificates
