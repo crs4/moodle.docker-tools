@@ -8,8 +8,6 @@ mysql:
     MYSQL_DATABASE: {{MYSQL_DATABASE}}
     MYSQL_USER: {{MYSQL_USER}}
     MYSQL_PASSWORD: {{MYSQL_PASSWORD}}
-  volumes:
-    - {{MYSQL_DATADIR}}:/var/lib/mysql
   hostname: mysql
   ports:
     - "4306:3306"
