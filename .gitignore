@@ -1,4 +1,4 @@
 .idea
 
+images/apache/certs/*
 docker-compose.yml
-
