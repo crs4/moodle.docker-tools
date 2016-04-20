@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Base path for sharing between DOCKER Host and containers
-export SHARED_HOST_FOLDER="${HOME}/Sharing/MoodleDocker"
+export SHARED_HOST_FOLDER="${HOME}/Development/Environment/Cytest/Develop/MoodleDocker"
 
 # Shared www and data paths
 export SHARED_WWW="${SHARED_HOST_FOLDER}/www"
@@ -14,16 +14,20 @@ export MYSQL_ROOT_PASSWORD="moodle"
 export MYSQL_DATABASE="moodle"
 export MYSQL_USER="moodle"
 export MYSQL_PASSWORD="moodle"
-export MYSQL_DATADIR="${SHARED_DATA}/mysql"
+export MYSQL_DATADIR="/var/lib/mysql"
+export SHARED_MYSQL_DATADIR="${SHARED_DATA}/mysql"
 
 # Moodle Configuration
 export APACHE_WWW_ROOT="/var/www/html"
 export MOODLE_WWW_ROOT="${APACHE_WWW_ROOT}/moodle"
-export MOODLE_DATA_DIR="/data/moodle"
+export MOODLE_DATA_DIR="/var/www/moodledata"
 export MOODLE_LOG_DIR="/var/log/apache2"
 export SHARED_MOODLE_WWW_ROOT="${SHARED_WWW}/moodle"
 export SHARED_MOODLE_LOG_DIR="${SHARED_LOG}/moodle"
 export SHARED_MOODLE_DATA_DIR="${SHARED_DATA}/moodle"
+
+# certs Path
+export CERTS_PATH=images/apache/certs
 
 # SSH service of the Moodle container # TODO: needed?
 CONTAINER_SSH_PORT=4376
@@ -35,4 +39,8 @@ if [[ ! -f ${SSH_KEY} ]]; then
 fi
 export SSH_KEY_PATH=$SSH_KEY
 
-
+# DOCKER IMAGE SETTINGS
+export DOCKER_VOLUME_PREFIX="moodle-docker-"
+export DOCKERHUB_REPOSITORY="crs4"
+export DOCKERHUB_MYSQL_IMAGE="moodle-mysql"
+export DOCKERHUB_APACHE_IMAGE="moodle-apache-php"
