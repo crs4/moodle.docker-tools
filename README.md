@@ -1,4 +1,4 @@
-# omero_moodle.docker
+# moodle.docker-tools
 
 A Dockerized Moodle for development purposes.
 
