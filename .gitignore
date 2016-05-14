@@ -1,4 +1,5 @@
 .idea
 
+images/apache/moodle/*
 images/apache/certs/*
 docker-compose.yml
