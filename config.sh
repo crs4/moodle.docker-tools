@@ -29,9 +29,6 @@ export SHARED_MOODLE_DATA_DIR="${SHARED_DATA}/moodle"
 # certs Path
 export CERTS_PATH=images/apache/certs
 
-# SSH service of the Moodle container # TODO: needed?
-CONTAINER_SSH_PORT=4376
-
   #--> SSH KEY <--
 SSH_KEY="${HOME}/.ssh/id_dsa.pub"
 if [[ ! -f ${SSH_KEY} ]]; then
