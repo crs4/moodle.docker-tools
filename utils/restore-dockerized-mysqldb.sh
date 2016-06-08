@@ -16,12 +16,13 @@ MYSQL_DUMP=$(realpath ${MYSQL_DUMP})
 
 # create the 'configured' script
 envsubst '$MYSQL_DATABASE:$MYSQL_ROOT_PASSWORD:$MYSQL_USER:$MYSQL_PASSWORD' \
-          < $(pwd)/utils/restore-mysqldb.sh \
-          > $(pwd)/utils/restore-mysqldb-configured.sh
+          < ${DIR}/restore-mysqldb.sh \
+          > ${DIR}/restore-mysqldb-configured.sh
+chmod +x  ${DIR}/restore-mysqldb-configured.sh
 
 # copy utility files
 docker run -it --rm \
-           -v $(pwd)/utils/restore-mysqldb-configured.sh:/utils/restore-mysqldb.sh \
+           -v ${DIR}/restore-mysqldb-configured.sh:/utils/restore-mysqldb.sh \
            -v  ${MYSQL_DUMP}:/mysql-dump.sql \
            -v moodle-docker-mysql-data:/mysql-data \
            ubuntu bash -c "mkdir -p /mysql-data/tmp && cp /utils/restore-mysqldb.sh /mysql-data/tmp/ && cp /mysql-dump.sql /mysql-data/tmp/"
@@ -34,3 +35,4 @@ docker exec -it dockertools_mysql_1 bash -c \
 docker run -it --rm \
            -v moodle-docker-mysql-data:/mysql-data \
            ubuntu bash -c "rm -Rf /mysql-data/tmp"
+rm ${DIR}/restore-mysqldb-configured.sh
