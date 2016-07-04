@@ -10,6 +10,7 @@ mysql:
   volumes:
     - {{DOCKER_VOLUME_PREFIX}}mysql-data:{{MYSQL_DATADIR}}
   hostname: mysql
+  restart: always
   ports:
     - "4306:3306"
 
@@ -27,6 +28,7 @@ apache:
     - {{DOCKER_VOLUME_PREFIX}}moodle-data:{{MOODLE_DATA_DIR}}
     - {{DOCKER_VOLUME_PREFIX}}moodle-logs:{{MOODLE_LOG_DIR}}
   hostname: moodle
+  restart: always
   links:
     - mysql
   ports:
@@ -35,3 +37,5 @@ apache:
   dns:
     - 8.8.8.8
     # add other DNS if you need
+
+
