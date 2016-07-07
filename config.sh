@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # Base path for sharing between DOCKER Host and containers
 export SHARED_HOST_FOLDER="${HOME}/Development/Projects/Cytest/MoodleDocker"
 
