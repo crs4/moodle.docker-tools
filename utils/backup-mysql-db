@@ -1,0 +1,9 @@
+#!/bin/bash
+
+source ../config.sh
+
+mysqldump -h $(hostname) \
+          -u ${MYSQL_ROOT_PASSWORD} \
+          -p${MYSQL_PASSWORD}  \
+          ${MYSQL_DATABASE} \
+          > ${MYSQL_BACKUPS_DIR}/$(echo "$(date +'%d%m%Y-%H%M%S%3N').sql")

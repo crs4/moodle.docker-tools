@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # Base path for sharing between DOCKER Host and containers
-export SHARED_HOST_FOLDER="${HOME}/Development/Environment/Cytest/Develop/MoodleDocker"
+export SHARED_HOST_FOLDER="${HOME}/Development/Projects/Cytest/MoodleDocker"
 
 # Shared www and data paths
 export SHARED_WWW="${SHARED_HOST_FOLDER}/www"
@@ -29,9 +31,6 @@ export SHARED_MOODLE_DATA_DIR="${SHARED_DATA}/moodle"
 # certs Path
 export CERTS_PATH=images/apache/certs
 
-# SSH service of the Moodle container # TODO: needed?
-CONTAINER_SSH_PORT=4376
-
   #--> SSH KEY <--
 SSH_KEY="${HOME}/.ssh/id_dsa.pub"
 if [[ ! -f ${SSH_KEY} ]]; then
@@ -44,3 +43,7 @@ export DOCKER_VOLUME_PREFIX="moodle-docker-"
 export DOCKERHUB_REPOSITORY="crs4"
 export DOCKERHUB_MYSQL_IMAGE="moodle-mysql"
 export DOCKERHUB_APACHE_IMAGE="moodle-apache-php"
+export DOCKERHUB_DROPBOX_IMAGE="moodle-dropbox"
+
+# BACKUP folder
+export MYSQL_BACKUPS_DIR="${CURRENT_PATH}/Backups"

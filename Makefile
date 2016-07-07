@@ -15,7 +15,9 @@ build-images: build-certificates
 	cd $${current_path}/images/mysql  \
 		 && ./build_image.sh $${DOCKERHUB_REPOSITORY} $${DOCKERHUB_MYSQL_IMAGE}; \
 	cd $${current_path}/images/apache \
-		 && ./build_image.sh $${DOCKERHUB_REPOSITORY} $${DOCKERHUB_APACHE_IMAGE};
+		 && ./build_image.sh $${DOCKERHUB_REPOSITORY} $${DOCKERHUB_APACHE_IMAGE}; \
+  cd $${current_path}/images/dropbox \
+		 && ./build_image.sh $${DOCKERHUB_REPOSITORY} $${DOCKERHUB_DROPBOX_IMAGE};
 
 build-certificates:
 	# build the required certificates

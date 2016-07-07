@@ -42,9 +42,8 @@ ENV MOODLE_WWW_ROOT ${WWW_ROOT}/moodle
 ENV MOODLE_DATA_DIR /var/www/moodledata
 
 # Clone Moodle
-RUN cd /opt \
-    && git clone https://github.com/moodle/moodle.git \
-    && cd moodle \
+COPY moodle /opt/moodle
+RUN cd /opt/moodle \
     && git checkout ${MOODLE_VERSION}
 
 # download grunt requirements
