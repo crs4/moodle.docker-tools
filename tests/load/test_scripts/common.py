@@ -4,7 +4,7 @@ import socket
 import mechanize
 from os import path
 
-BASE_URL = socket.gethostname()
+BASE_URL = "http://" + socket.gethostname() + "/moodle"
 
 HTTP_CODES = [200, 300, 301, 302, 303, 304, 400, 401, 403, 404, 405, 406, 408, 500]
 
