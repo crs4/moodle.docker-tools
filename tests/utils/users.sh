@@ -4,7 +4,7 @@
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # set the filename
-FILENAME="user.csv"
+FILENAME="users.tsv"
 if [[ -n $1 ]]; then
     FILENAME=${1}
 fi
