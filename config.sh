@@ -11,6 +11,7 @@ export SHARED_LOG="${SHARED_HOST_FOLDER}/log"
 export SHARED_DATA="${SHARED_HOST_FOLDER}/data"
 
 # MySQL Configurations
+export MYSQL_HOST=$(hostname)
 export MYSQL_ALLOW_EMPTY_PASSWORD="yes"
 export MYSQL_ROOT_PASSWORD="moodle"
 export MYSQL_DATABASE="moodle"
