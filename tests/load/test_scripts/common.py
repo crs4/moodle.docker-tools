@@ -2,11 +2,10 @@ import abc
 import time
 import socket
 import mechanize
+from timers import report_timers
 from os import path
 
 BASE_URL = "http://" + socket.gethostname() + "/moodle"
-
-HTTP_CODES = [200, 300, 301, 302, 303, 304, 400, 401, 403, 404, 405, 406, 408, 500]
 
 
 class BaseTransaction(object):
@@ -35,7 +34,7 @@ class BaseTransaction(object):
     def _get_form(self, browser, form_id, disable_read_only=True, select_form=True):
         count = 0
         for f in browser.forms():
-            if f.attrs["id"] == form_id:
+            if f.attrs.has_key("id") and f.attrs["id"] == form_id:
                 if disable_read_only:
                     f.set_all_readonly(False)
                 if select_form:
@@ -55,14 +54,7 @@ class BaseTransaction(object):
         resp = browser.open(path.join(base_path, relative_path))
         latency = time.time() - start_time
 
-        if timer_name:
-            self.custom_timers[timer_name] = latency
-
-        if resp.code in HTTP_CODES:
-            self.custom_timers["CODE_" + str(resp.code)] = 1
-            for code in HTTP_CODES:
-                if code != resp.code:
-                    self.custom_timers["CODE_" + str(code)] = 0
+        report_timers(self.custom_timers, timer_name, resp, latency)
 
         assert (resp.code == 200), 'Bad HTTP Response: ' + str(resp.code)
 
