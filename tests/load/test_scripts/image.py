@@ -1,10 +1,12 @@
 import time
+import copy
 import thread
 import threading
 import requests
 import math
 from timers import report_timers
 import xml.etree.ElementTree as ET
+
 
 class Image():
     def __init__(self, image_id, timer_registry=None, timer_name="DZI Retrieve"):
@@ -16,7 +18,11 @@ class Image():
 
     @property
     def image_info(self):
-        return self._info
+        return copy.deepcopy(self._info)
+
+    @property
+    def id(self):
+        return self._info["id"]
 
     @property
     def max_zoom_level(self):
@@ -100,5 +106,3 @@ class ImageLoader(threading.Thread):
             latency = time.time() - start_time
             report_timers(self._timer_registry, self._timer_name, resp, latency)
         print "Exiting " + self
-
-
