@@ -98,7 +98,7 @@ class ImageLoader(threading.Thread):
         self._stop.set()
 
     def __str__(self):
-        return "Thread " + self._threadID + " related to the Image " + self._image
+        return "Thread " + self._threadID + " related to the " + str(self._image)
 
     def run(self):
         print "Starting " + self
