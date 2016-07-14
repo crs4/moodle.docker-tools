@@ -1,3 +1,4 @@
+import os
 import time
 import copy
 import thread
@@ -87,6 +88,7 @@ class ImageLoader(threading.Thread):
         self._timer_registry = timer_registry
         self._timer_name = timer_name
         self._stop = threading.Event()
+        self._server = os.environ["OMESEADRAGON_HOST"]
 
     @property
     def stopped(self):
