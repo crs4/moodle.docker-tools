@@ -40,6 +40,14 @@ class Image():
     def scale_factor(self, level):
         return Image.get_scale_factor(level, self._info["max_zoom_level"])
 
+    def rows(self, zoom_level):
+        scaled_width = self._info["width"] * self.scale_factor(zoom_level)
+        return int(scaled_width / self._info["tilesize"])
+
+    def columns(self, zoom_level):
+        scaled_height = self._info["height"] * self.scale_factor(zoom_level)
+        return int(scaled_height / self._info["tilesize"])
+
     def __str__(self):
         return "Image " + str(self._image_id)
 
