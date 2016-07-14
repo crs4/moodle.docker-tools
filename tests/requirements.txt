@@ -1,3 +1,2 @@
 Mechanize==0.2.5
-BeautifulSoup==3.2.0
-
+BeautifulSoup==4.4.1
