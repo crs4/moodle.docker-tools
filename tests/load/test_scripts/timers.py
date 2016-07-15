@@ -1,4 +1,3 @@
-HTTP_CODES = [200, 300, 301, 302, 303, 304, 400, 401, 403, 404, 405, 406, 408, 500]
 
 
 def report_timers(timer_registry, timer_name, response, latency):
