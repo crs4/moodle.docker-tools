@@ -49,6 +49,40 @@ class Image():
         scaled_height = self._info["height"] * self.scale_factor(zoom_level)
         return int(scaled_height / self._info["tilesize"]) + 1
 
+    def load_tiles(self, zoom_level, frame_width=600, frame_height=500, deep_load=True, timer_name="LoadTiles"):
+        current_level = zoom_level
+        counters = {}
+        while current_level >= 8:
+            counter = 0
+            level_distance = zoom_level - current_level
+            reduction_factor = level_distance * 2 if level_distance > 0 else 1
+            max_rows = ((frame_width / self._info["tilesize"]) + 1) / reduction_factor
+            max_cols = ((frame_height / self._info["tilesize"]) + 1) / reduction_factor
+            # max_tiles_level = max_rows * max_cols
+            start_time = time.time()
+            for row in range(0, min(max_rows, self.rows(current_level)) + 1):
+                for col in range(0, min(max_cols, self.columns(current_level)) + 1):
+                    self.load_tile(current_level, row, col)
+                    counter += 1
+            latency = time.time() - start_time
+            report_timers(self._timer_registry, timer_name, start_time, latency)
+            counters[current_level] = counter
+            if deep_load:
+                current_level -= 1
+            else:
+                break
+        print counters
+
+    def load_tile(self, zoom_level, row, col, timer_name="LoadTile"):
+        start_time = time.time()
+        request_path = os.path.join(self._server, "ome_seadragon", "deepzoom", "get",
+                                    str(self._image_id) + "_files", str(zoom_level),
+                                    str(row) + "_" + str(col) + ".jpeg")
+        print "Request path: %s" % request_path
+        resp = requests.get(request_path)
+        latency = time.time() - start_time
+        report_timers(self._timer_registry, timer_name, start_time, latency, resp)
+
     def __str__(self):
         return "Image " + str(self._image_id)
 
@@ -60,7 +94,7 @@ class Image():
         latency = time.time() - start
         if timer_registry is not None:
             timer_registry[timer_name] = latency
-            report_timers(timer_registry, timer_name, response, latency)
+            report_timers(timer_registry, timer_name, start, latency, response)
         # parse the response
         root = ET.fromstring(response.content)
         children = root.getchildren()
