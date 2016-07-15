@@ -28,9 +28,59 @@ def append_timer(timer_registry, timer_name, start_time, latency, response):
         return False
     conn.close()
     return True
+
+
+def report_timers(timer_registry, timer_name, start_time, latency, response=0):
+    print "Print timer before...."
+    print timer_registry
+
+    if TIMER_TYPE == "analytic":
+        report_analytic_timers(timer_registry, timer_name, start_time, latency, response)
+    else:
+        report_average_timers(timer_registry, timer_name, start_time, latency, response)
+    print "Print timer after...."
+    print timer_registry
+
+    append_timer(timer_registry, timer_name, start_time, latency, response)
+
+
+def report_analytic_timers(timer_registry, timer_name, start_time, latency, response = 0):
+    if timer_registry.has_key(timer_name):
+        timer_registry[timer_name] = []
+    timer_registry[timer_name].append(latency)
+    if isinstance(response, int):
+        response_code = response
+    else:
         response_code = response.status_code if hasattr(response, "status_code") else response.code
-        if response_code in HTTP_CODES:
-            timer_registry["CODE_" + str(response_code)] = 1
-        for code in HTTP_CODES:
-            if code != response_code:
-                timer_registry["CODE_" + str(code)] = 0
+    print response_code
+    if response_code in HTTP_CODES:
+        tc_name = "CODE_" + str(response_code)
+        if not timer_registry.has_key(tc_name):
+            timer_registry[tc_name] = []
+        timer_registry[tc_name].append(1)
+    for code in HTTP_CODES:
+        if code != response_code:
+            tc_name = "CODE_" + str(code)
+            if not timer_registry.has_key(tc_name):
+                timer_registry["CODE_" + str(tc_name)] = []
+            timer_registry["CODE_" + str(tc_name)].append(0)
+
+
+def report_average_timers(timer_registry, timer_name, start_time, latency, response=0):
+    timer_registry[timer_name] = latency
+    if isinstance(response, int):
+        response_code = response
+    else:
+        response_code = response.status_code if hasattr(response, "status_code") else response.code
+    print response_code
+    if response_code in HTTP_CODES:
+        tc_name = "CODE_" + str(response_code)
+        if timer_registry.has_key(tc_name):
+            timer_registry[tc_name] += 1
+        else:
+            timer_registry[tc_name] = 1
+    for code in HTTP_CODES:
+        if code != response_code:
+            tc_name = "CODE_" + str(code)
+            if not timer_registry.has_key(tc_name):
+                timer_registry["CODE_" + str(tc_name)] = 0
