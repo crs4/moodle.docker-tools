@@ -15,7 +15,7 @@ class Image():
         self._timer_registry = timer_registry
         self._timer_name = timer_name
         self._server = image_server
-        self._info = Image.get_dzi_image_info(self._image_id, timer_registry, timer_name)
+        self._info = Image.get_dzi_image_info(image_server, self._image_id, timer_registry, timer_name)
         self._info["max_zoom_level"] = self.get_max_zoom_level(self._info)
 
     @property
@@ -99,14 +99,15 @@ class Image():
         return "Image " + str(self._image_id)
 
     @staticmethod
-    def get_dzi_image_info(image_id, timer_registry=None, timer_name="DZI Retrieve"):
+    def get_dzi_image_info(server, image_id, timer_registry=None, timer_name="DZI Retrieve"):
         info = {}
         start = time.time()
-        response = requests.get("http://ome-cytest.crs4.it:8080/ome_seadragon/deepzoom/get/" + str(image_id) + ".dzi")
+        response = requests.get(
+            os.path.join(server, "ome_seadragon", "deepzoom", "get", str(image_id) + ".dzi"))
         latency = time.time() - start
         if timer_registry is not None:
             timer_registry[timer_name] = latency
-            report_timers(timer_registry, timer_name, start, latency, response)
+        report_timers(timer_registry, timer_name, start, latency, response)
         # parse the response
         root = ET.fromstring(response.content)
         children = root.getchildren()
