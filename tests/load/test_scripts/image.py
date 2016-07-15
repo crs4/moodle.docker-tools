@@ -43,11 +43,11 @@ class Image():
 
     def rows(self, zoom_level):
         scaled_width = self._info["width"] * self.scale_factor(zoom_level)
-        return int(scaled_width / self._info["tilesize"])
+        return int(scaled_width / self._info["tilesize"]) + 1
 
     def columns(self, zoom_level):
         scaled_height = self._info["height"] * self.scale_factor(zoom_level)
-        return int(scaled_height / self._info["tilesize"])
+        return int(scaled_height / self._info["tilesize"]) + 1
 
     def __str__(self):
         return "Image " + str(self._image_id)
