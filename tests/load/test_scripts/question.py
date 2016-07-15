@@ -48,8 +48,8 @@ class Question():
         return self._info["id"]
 
     @property
-    def max_zoom_level(self):
-        return self._info["max_zoom_level"]
+    def zoom_level(self):
+        return self._info.get("image_properties").get("zoom_level")
 
     @property
     def width(self):
