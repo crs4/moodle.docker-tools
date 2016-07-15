@@ -1,11 +1,18 @@
+import os
 import abc
 import time
-import socket
 import mechanize
-from timers import report_timers
 from os import path
+from urlparse import urlparse
+from settings import MOODLE_URL
+from timers import report_timers
 
-BASE_URL = "http://" + socket.gethostname() + "/moodle"
+
+def get_server_url(browser, moodle_relative_path="moodle"):
+    browser_url = urlparse(browser.geturl())
+    moodle_url = browser_url.scheme + "://" + os.path.join(browser_url.hostname, "moodle")
+    # return (browser_url, moodle_url)
+    return moodle_url
 
 
 class BaseTransaction(object):
