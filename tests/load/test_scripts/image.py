@@ -49,28 +49,40 @@ class Image():
         scaled_height = self._info["height"] * self.scale_factor(zoom_level)
         return int(scaled_height / self._info["tilesize"]) + 1
 
-    def load_tiles(self, zoom_level, frame_width=600, frame_height=500, deep_load=True, timer_name="LoadTiles"):
-        current_level = zoom_level
+    def load_tiles(self, zoom_level, frame_width=600, frame_height=500,
+                   deep_load=True, multithreading=False, timer_name="LoadTiles"):
+        threads = []
         counters = {}
+        current_level = zoom_level
         while current_level >= 8:
-            counter = 0
-            level_distance = zoom_level - current_level
-            reduction_factor = level_distance * 2 if level_distance > 0 else 1
-            max_rows = ((frame_width / self._info["tilesize"]) + 1) / reduction_factor
-            max_cols = ((frame_height / self._info["tilesize"]) + 1) / reduction_factor
-            # max_tiles_level = max_rows * max_cols
-            start_time = time.time()
-            for row in range(0, min(max_rows, self.rows(current_level)) + 1):
-                for col in range(0, min(max_cols, self.columns(current_level)) + 1):
-                    self.load_tile(current_level, row, col)
-                    counter += 1
-            latency = time.time() - start_time
-            report_timers(self._timer_registry, timer_name, start_time, latency)
-            counters[current_level] = counter
+            if multithreading:
+                t = ImageLoader(self.__str__() + "@" + str(current_level), self,
+                                current_level, frame_width, frame_height, timer_name="Tile Retrieve")
+                threads.append(t)
+                t.start()
+            else:
+                counter = 0
+                level_distance = zoom_level - current_level
+                reduction_factor = level_distance * 2 if level_distance > 0 else 1
+                max_rows = ((frame_width / self._info["tilesize"]) / reduction_factor) + 1
+                max_cols = ((frame_height / self._info["tilesize"]) / reduction_factor) + 1
+                # max_tiles_level = max_rows * max_cols
+                start_time = time.time()
+                for row in range(0, min(max_rows, self.rows(current_level) + 1)):
+                    for col in range(0, min(max_cols, self.columns(current_level) + 1)):
+                        self.load_tile(current_level, row, col)
+                        counter += 1
+                latency = time.time() - start_time
+                report_timers(self._timer_registry, timer_name, start_time, latency)
+                counters[current_level] = counter
+
             if deep_load:
                 current_level -= 1
             else:
                 break
+        if multithreading:
+            for t in threads:
+                t.join()
         print counters
 
     def load_tile(self, zoom_level, row, col, timer_name="LoadTile"):
@@ -124,14 +136,17 @@ class Image():
 
 
 class ImageLoader(threading.Thread):
-    def __init__(self, threadID, image, timer_registry=None, timer_name="Tile Retrieve"):
+    def __init__(self, threadID, image,
+                 zoom_level, frame_width=600, frame_height=500,
+                 timer_name="Tile Retrieve"):
         threading.Thread.__init__(self)
         self._threadID = threadID
         self._image = image
-        self._timer_registry = timer_registry
+        self._zoom_level = zoom_level
+        self._frame_width = frame_width
+        self._frame_height = frame_height
         self._timer_name = timer_name
         self._stop = threading.Event()
-        self._server = os.environ["OMESEADRAGON_HOST"]
 
     @property
     def stopped(self):
@@ -144,10 +159,6 @@ class ImageLoader(threading.Thread):
         return "Thread " + self._threadID + " related to the " + str(self._image)
 
     def run(self):
-        print "Starting " + self
-        while not self._stop.isSet():
-            start_time = time.time()
-            resp = requests.get("http://ome-cytest.crs4.it:8080/ome_seadragon/deepzoom/get/7294_files/13/10_12.jpeg")
-            latency = time.time() - start_time
-            report_timers(self._timer_registry, self._timer_name, resp, latency)
-        print "Exiting " + self
+        print "Starting " + str(self)
+        self._image.load_tiles(self._zoom_level, self._frame_width, self._frame_height, False, False)
+        print "Exiting " + str(self)
