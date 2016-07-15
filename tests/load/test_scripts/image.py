@@ -1,24 +1,25 @@
 import os
 import time
 import copy
-import thread
 import threading
 import requests
 import math
-from timers import report_timers
 import xml.etree.ElementTree as ET
+from timers import report_timers
 
 
 class Image():
-    def __init__(self, image_id, timer_registry=None, timer_name="DZI Retrieve"):
+    def __init__(self, browser, image_id, image_server, timer_registry=None, timer_name="load_DZI"):
+        self._browser = browser
         self._image_id = image_id
         self._timer_registry = timer_registry
         self._timer_name = timer_name
+        self._server = image_server
         self._info = Image.get_dzi_image_info(self._image_id, timer_registry, timer_name)
         self._info["max_zoom_level"] = self.get_max_zoom_level(self._info)
 
     @property
-    def image_info(self):
+    def info(self):
         return copy.deepcopy(self._info)
 
     @property
