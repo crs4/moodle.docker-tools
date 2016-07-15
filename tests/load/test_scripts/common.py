@@ -50,21 +50,17 @@ class BaseTransaction(object):
             count += 1
         return None
 
-    def _build_path(self, relative_url, params={}):
-        p = BASE_URL + "/" + relative_url
+    def _build_path(self, relative_url, base_path=MOODLE_URL, params={}):
+        p = base_path + "/" + relative_url
         return p
 
-    def _go_to_page(self, browser, relative_path, base_path=BASE_URL, params=None, timer_name=None, sleep_time=0):
-
+    def _go_to_page(self, browser, relative_path, base_path=MOODLE_URL, params=None, timer_name=None, sleep_time=0):
         start_time = time.time()
-
+        print "PATH: %s" % path.join(base_path, relative_path)
         resp = browser.open(path.join(base_path, relative_path))
         latency = time.time() - start_time
-
-        report_timers(self.custom_timers, timer_name, resp, latency)
-
+        report_timers(self.custom_timers, timer_name, start_time, latency, resp)
         assert (resp.code == 200), 'Bad HTTP Response: ' + str(resp.code)
-
         return resp
 
     def run(self):
