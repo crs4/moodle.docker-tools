@@ -2,10 +2,17 @@ import os
 import time
 import copy
 import json
+import common
 from image import Image
 from urlparse import urlparse
 from bs4 import BeautifulSoup
 from timers import report_timers
+
+
+class QUESTION_IMAGE_NAVIGATION_LOAD():
+    LOW = 0
+    MEDIUM = 1
+    HIGH = 2
 
 
 class Question():
@@ -65,6 +72,28 @@ class Question():
 
     def __str__(self):
         return "Question " + str(self._info["qname"])
+
+    def navigate_image(self, load=QUESTION_IMAGE_NAVIGATION_LOAD.LOW, multithread=False,
+                       frame_width=600, frame_height=500):
+        zoom_levels = []
+        image = self.image
+        current_zoom_level = int(round(self.zoom_level))
+        print "CURRENT ZOOM LEVEL %s" % self.zoom_level
+        print "MAX ZOOM LEVEL %s" % image.max_zoom_level
+        if load == QUESTION_IMAGE_NAVIGATION_LOAD.LOW:
+            zoom_levels.append(current_zoom_level)
+        elif load == QUESTION_IMAGE_NAVIGATION_LOAD.MEDIUM:
+            delta = int(current_zoom_level / 4)
+            for level in range(current_zoom_level - delta, current_zoom_level + delta):
+                zoom_levels.append(level)
+                print level
+        else:
+            for level in range(8, int(image.max_zoom_level) + 1):
+                zoom_levels.append(level)
+                print level
+        for level in zoom_levels:
+            image.load_tiles(level, frame_width, frame_height, frame_height, multithreading=True)
+        print "ZOOM LEVELs:", zoom_levels
 
     @staticmethod
     def get_server_url(browser, moodle_relative_path="moodle"):
