@@ -64,12 +64,12 @@ class Image():
                 counter = 0
                 level_distance = zoom_level - current_level
                 reduction_factor = level_distance * 2 if level_distance > 0 else 1
-                max_rows = ((frame_width / self._info["tilesize"]) / reduction_factor) + 1
-                max_cols = ((frame_height / self._info["tilesize"]) / reduction_factor) + 1
+                max_rows = ((frame_width / self._info["tilesize"] + 1) / reduction_factor)
+                max_cols = ((frame_height / self._info["tilesize"] + 1) / reduction_factor)
                 # max_tiles_level = max_rows * max_cols
                 start_time = time.time()
-                for row in range(0, min(max_rows, self.rows(current_level) + 1)):
-                    for col in range(0, min(max_cols, self.columns(current_level) + 1)):
+                for row in range(0, min(max_rows, self.rows(current_level)) + 1):
+                    for col in range(0, min(max_cols, self.columns(current_level)) + 1):
                         self.load_tile(current_level, row, col)
                         counter += 1
                 latency = time.time() - start_time
