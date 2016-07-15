@@ -19,8 +19,10 @@ export MYSQL_USER="moodle"
 export MYSQL_PASSWORD="moodle"
 export MYSQL_DATADIR="/var/lib/mysql"
 export SHARED_MYSQL_DATADIR="${SHARED_DATA}/mysql"
+export LOAD_TEST_DB="load_tests"
 
 # Moodle Configuration
+export MOODLE_HOST=$(hostname)
 export APACHE_WWW_ROOT="/var/www/html"
 export MOODLE_WWW_ROOT="${APACHE_WWW_ROOT}/moodle"
 export MOODLE_DATA_DIR="/var/www/moodledata"
