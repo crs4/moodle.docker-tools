@@ -16,7 +16,8 @@ class QUESTION_IMAGE_NAVIGATION_LOAD():
 
 
 class Question():
-    def __init__(self, browser, question_id, timer_registry=None, timer_name="load_QuestionInfo"):
+    def __init__(self, browser, question_id, timer_registry=None,
+                 timer_name="load_QuestionInfo", lazy_load_image=False):
         self._browser = browser
         self._question_id = question_id
         self._timer_registry = timer_registry
@@ -25,6 +26,8 @@ class Question():
         self._moodle_url = self._server_info[1]
         self._info = Question.load_question_info(browser, question_id,
                                                  timer_registry=timer_registry, timer_name=timer_name)
+        if not lazy_load_image:
+            self._load_image()
 
     @property
     def question_id(self):
@@ -37,10 +40,7 @@ class Question():
     @property
     def image(self):
         if not hasattr(self, "_image"):
-            self._image = Image(self._browser,
-                                self._info.get("image_id"),
-                                self._info["image_server"],
-                                timer_registry=self._timer_registry)
+            self._load_image()
         return self._image
 
     @property
@@ -58,6 +58,12 @@ class Question():
     @property
     def height(self):
         return self._info["height"]
+
+    def _load_image(self):
+        self._image = Image(self._browser,
+                            self._info.get("image_id"),
+                            self._info["image_server"],
+                            timer_registry=self._timer_registry)
 
     def scale_factor(self, level):
         return Question.get_scale_factor(level, self._info["max_zoom_level"])
