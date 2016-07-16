@@ -2,11 +2,9 @@ import os
 import time
 import copy
 import json
-import common
 from image import Image
 from urlparse import urlparse
 from bs4 import BeautifulSoup
-from timers import report_timers
 
 
 class QUESTION_IMAGE_NAVIGATION_LOAD():
@@ -80,7 +78,7 @@ class Question():
         return "Question " + str(self._info["qname"])
 
     def navigate_image(self, load=QUESTION_IMAGE_NAVIGATION_LOAD.LOW, multithread=False,
-                       frame_width=600, frame_height=500):
+                       frame_width=600, frame_height=500, think_time_per_level=3):
         zoom_levels = []
         image = self.image
         current_zoom_level = int(round(self.zoom_level))
@@ -98,7 +96,8 @@ class Question():
                 zoom_levels.append(level)
                 print level
         for level in zoom_levels:
-            image.load_tiles(level, frame_width, frame_height, frame_height, multithreading=True)
+            image.load_tiles(level, frame_width, frame_height, frame_height, multithreading=multithread)
+            time.sleep(think_time_per_level)
         print "ZOOM LEVELs:", zoom_levels
 
     @staticmethod
@@ -112,9 +111,9 @@ class Question():
                            moodle_relative_path="moodle", timer_registry=None,
                            timer_name="Question info loading"):
         browser_info = Question.get_server_url(browser, moodle_relative_path=moodle_relative_path)
-        start = time.time()
+        start_time = time.time()
         response = browser.open(os.path.join(browser_info[1], "question", "preview.php?id=" + str(question_id)))
-        latency = time.time() - start
+        latency = time.time() - start_time
         # register timers & counters
         timer_registry.add_timer(timer_name, start_time, latency, response.code)
         # extract data
