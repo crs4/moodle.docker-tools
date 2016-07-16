@@ -5,7 +5,6 @@ import mechanize
 from os import path
 from urlparse import urlparse
 from settings import MOODLE_URL
-from timers import report_timers
 
 
 def get_server_url(browser, moodle_relative_path="moodle"):
@@ -28,9 +27,6 @@ class BaseTransaction(object):
     @abc.abstractmethod
     def transaction_flow(self):
         pass
-
-    def _add_time(self, timer_name, timer_value):
-        self.custom_timers[timer_name] = timer_value
 
     def _make_browser(self):
         browser = mechanize.Browser()
