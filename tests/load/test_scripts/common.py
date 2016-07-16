@@ -5,6 +5,7 @@ import mechanize
 from os import path
 from urlparse import urlparse
 from settings import MOODLE_URL
+from timers import TimerRegistry
 
 
 def get_server_url(browser, moodle_relative_path="moodle"):
@@ -50,17 +51,25 @@ class BaseTransaction(object):
         p = base_path + "/" + relative_url
         return p
 
-    def _go_to_page(self, browser, relative_path, base_path=MOODLE_URL, params=None, timer_name=None, sleep_time=0):
+    def run(self):
+        print "Custom timer before", self.custom_timers
+        start_time = time.time()
+        transaction_flow_id = "Transaction-" + self.transaction_name()
+        timer_registry = TimerRegistry(self)
+        self.transaction_flow(timer_registry)
+        latency = time.time() - start_time
+        timer_registry.add_timer("Transaction-" + self.transaction_name(), start_time, latency)
+        timer_registry.write_timers_to_db()
+        print "Ending: %s" % str(transaction_flow_id)
+        print "Custom timer after", self.custom_timers
+
+    @staticmethod
+    def go_to_page(timer_registry, browser, relative_path, base_path=MOODLE_URL, params=None, timer_name=None,
+                   sleep_time=0):
         start_time = time.time()
         print "PATH: %s" % path.join(base_path, relative_path)
         resp = browser.open(path.join(base_path, relative_path))
         latency = time.time() - start_time
-        report_timers(self.custom_timers, timer_name, start_time, latency, resp)
+        timer_registry.add_timer(timer_name, start_time, latency, resp.code)
         assert (resp.code == 200), 'Bad HTTP Response: ' + str(resp.code)
         return resp
-
-    def run(self):
-        start_time = time.time()
-        self.transaction_flow()
-        end_time = time.time() - start_time
-        self._add_time(self.transaction_name(), end_time)
