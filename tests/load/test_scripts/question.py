@@ -116,9 +116,7 @@ class Question():
         response = browser.open(os.path.join(browser_info[1], "question", "preview.php?id=" + str(question_id)))
         latency = time.time() - start
         # register timers & counters
-        if timer_registry is not None:
-            timer_registry[timer_name] = latency
-            report_timers(timer_registry, timer_name, start, latency, response)
+        timer_registry.add_timer(timer_name, start_time, latency, response.code)
         # extract data
         soup = BeautifulSoup(response.get_data(), "html.parser")
         for i in soup.findAll("input"):

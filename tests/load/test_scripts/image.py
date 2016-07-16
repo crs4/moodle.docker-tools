@@ -5,7 +5,6 @@ import threading
 import requests
 import math
 import xml.etree.ElementTree as ET
-from timers import report_timers
 
 
 class Image():
@@ -74,7 +73,7 @@ class Image():
                         self.load_tile(current_level, row, col)
                         counter += 1
                 latency = time.time() - start_time
-                report_timers(self._timer_registry, timer_name, start_time, latency)
+                self._timer_registry.add_timer(timer_name + "@level" + str(current_level), start_time, latency)
                 counters[current_level] = counter
 
             if deep_load:
@@ -97,25 +96,24 @@ class Image():
             print "Request path: %s" % request_path
             resp = requests.get(request_path)
             latency = time.time() - start_time
-            report_timers(self._timer_registry, timer_name, start_time, latency, resp)
+            self._timer_registry.add_timer(timer_name, start_time, latency, resp.status_code)
             self._tile_loaded.append(tile_id)
+            #assert (resp.status_code == 200), 'Bad HTTP Response: ' + str(resp.status_code)
         else:
             print "Tile %s already loaded" % tile_id
-
 
     def __str__(self):
         return "Image " + str(self._image_id)
 
     @staticmethod
-    def get_dzi_image_info(server, image_id, timer_registry=None, timer_name="DZI Retrieve"):
+    def get_dzi_image_info(server, image_id, timer_registry, timer_name="DZI Retrieve"):
         info = {}
-        start = time.time()
-        response = requests.get(
-            os.path.join(server, "ome_seadragon", "deepzoom", "get", str(image_id) + ".dzi"))
-        latency = time.time() - start
-        if timer_registry is not None:
-            timer_registry[timer_name] = latency
-        report_timers(timer_registry, timer_name, start, latency, response)
+        start_time = time.time()
+        request = os.path.join(server, "ome_seadragon", "deepzoom", "get", str(image_id) + ".dzi")
+        response = requests.get(request)
+        latency = time.time() - start_time
+        timer_registry.add_timer(timer_name, start_time, latency, response.status_code)
+        assert (response.status_code == 200), 'Bad HTTP Response: ' + str(response.status_code) + ", " + request
         # parse the response
         root = ET.fromstring(response.content)
         children = root.getchildren()
