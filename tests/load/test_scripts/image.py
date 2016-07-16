@@ -17,6 +17,7 @@ class Image():
         self._server = image_server
         self._info = Image.get_dzi_image_info(image_server, self._image_id, timer_registry, timer_name)
         self._info["max_zoom_level"] = self.get_max_zoom_level(self._info)
+        self._tile_loaded = []
 
     @property
     def info(self):
@@ -86,14 +87,21 @@ class Image():
         print counters
 
     def load_tile(self, zoom_level, row, col, timer_name="LoadTile"):
-        start_time = time.time()
-        request_path = os.path.join(self._server, "ome_seadragon", "deepzoom", "get",
-                                    str(self._image_id) + "_files", str(zoom_level),
-                                    str(row) + "_" + str(col) + ".jpeg")
-        print "Request path: %s" % request_path
-        resp = requests.get(request_path)
-        latency = time.time() - start_time
-        report_timers(self._timer_registry, timer_name, start_time, latency, resp)
+        # check whether the tile has already been loaded
+        tile_id = os.path.join(str(zoom_level), str(row), str(col))
+        if tile_id not in self._tile_loaded:
+            start_time = time.time()
+            request_path = os.path.join(self._server, "ome_seadragon", "deepzoom", "get",
+                                        str(self._image_id) + "_files", str(zoom_level),
+                                        str(row) + "_" + str(col) + ".jpeg")
+            print "Request path: %s" % request_path
+            resp = requests.get(request_path)
+            latency = time.time() - start_time
+            report_timers(self._timer_registry, timer_name, start_time, latency, resp)
+            self._tile_loaded.append(tile_id)
+        else:
+            print "Tile %s already loaded" % tile_id
+
 
     def __str__(self):
         return "Image " + str(self._image_id)
