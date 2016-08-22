@@ -1,2 +1,5 @@
 Mechanize==0.2.5
 BeautifulSoup==4.4.1
+multi-mechanize==1.2.0
+MySQL-python
+Matplotlib
