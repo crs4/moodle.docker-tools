@@ -13,6 +13,10 @@ RUN apt-get update \
        graphviz aspell php5-pspell nano \
        php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap clamav \
     && apt-get clean
+	
+# Add git info of the current Git Repository
+COPY gitinfo.sh /usr/local/bin
+RUN cat /usr/local/bin/gitinfo.sh >> ~/.bashrc
 
 # update apache configuration
 RUN echo "ServerName localhost" >>  /etc/apache2/apache2.conf
