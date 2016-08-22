@@ -10,7 +10,7 @@ RUN apt-get update
 RUN apt-get update \
     && apt-get -y install \
        apache2 mysql-client php5 git-core nodejs-legacy npm \
-       graphviz aspell php5-pspell \
+       graphviz aspell php5-pspell nano \
        php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap clamav \
     && apt-get clean
 
