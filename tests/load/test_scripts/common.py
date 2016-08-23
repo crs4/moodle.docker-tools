@@ -1,6 +1,7 @@
 import os
 import abc
 import time
+import users
 import mechanize
 from os import path
 from bs4 import BeautifulSoup
@@ -21,6 +22,14 @@ class BaseTransaction(object):
 
     def __init__(self):
         self.custom_timers = {}
+        filename = users.USERS_FILENAME
+        if not os.path.isfile(filename):
+            base_path = os.path.dirname(__file__)
+            path = (base_path + "/../../") if base_path else '../../'
+            filename = path + filename
+            if not os.path.isfile(filename):
+                raise Exception("User list not found")
+        self.users = users.load_from_file(filename)
 
     @abc.abstractmethod
     def transaction_name(self):
@@ -71,6 +80,9 @@ class BaseTransaction(object):
                 if timer_registry:
                     timer_registry.add_timer("LoadingScript", start_time, latency)
                     print timer_registry._raw_timers
+
+    def get_list_of_users(self):
+        return self.users
 
     def run(self):
         print "Custom timer before", self.custom_timers
