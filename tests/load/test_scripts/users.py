@@ -6,6 +6,13 @@ import string
 import socket
 import MySQLdb
 
+# default filename containing test users
+USERS_FILENAME = 'users.csv'
+# default user prefix
+USER_PREFIX = 'testuser'
+# default user cohort
+USER_COHORT = 'test_users'
+
 # list of user properties
 USER_PROPERTIES = ['username', 'password', 'firstname', 'lastname', 'email', 'cohort1']
 
