@@ -1,3 +1,4 @@
+import random
 from common import BaseTransaction
 
 
@@ -18,8 +19,11 @@ class Transaction(BaseTransaction):
 
         login_form.set_all_readonly(False)
 
-        login_form["username"] = "admin"
-        login_form["password"] = "!#Moodle2016"
+        user = random.choice(self.get_list_of_users())
+        assert (user), "Error: unable to find a valid user"
+
+        login_form["username"] = user["username"]
+        login_form["password"] = user["password"]
 
         browser.submit()
 
