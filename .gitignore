@@ -3,7 +3,7 @@
 *.pyc
 
 tests/load/results
-tests/load/test_scripts/users.csv
+tests/load/**/users.csv
 images/apache/moodle/*
 images/apache/certs/*
 docker-compose.yml
