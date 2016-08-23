@@ -17,7 +17,7 @@ USER_COHORT = 'test_users'
 USER_PROPERTIES = ['username', 'password', 'firstname', 'lastname', 'email', 'cohort1']
 
 
-def load_from_file(filename="users.csv", delimiter=',', skip_header=True):
+def load_from_file(filename=USERS_FILENAME, delimiter=',', skip_header=True):
     result = []
     with open(filename, 'rb') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=delimiter)
@@ -40,7 +40,7 @@ def load_from_db(
     return result
 
 
-def generate_users(num_of_users=1, user_prefix='testuser', cohort='test_users'):
+def generate_users(num_of_users=1, user_prefix=USER_PREFIX, user_cohort=USER_COHORT):
     result = []
     if type(num_of_users) != int:
         raise ValueError("'num_of_users' must be an integer")
@@ -53,13 +53,13 @@ def generate_users(num_of_users=1, user_prefix='testuser', cohort='test_users'):
             'firstname': ''.join(["FN", str(i)]),
             'lastname': ''.join(["LN", str(i)]),
             'email': '@'.join([username, hostname]),
-            'cohort1': cohort
+            'cohort1': user_cohort
         }
         result.append(user)
     return result
 
 
-def write_users(users, filename='users.csv'):
+def write_users(users, filename=USERS_FILENAME):
     with open(filename, 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=USER_PROPERTIES)
         writer.writeheader()
