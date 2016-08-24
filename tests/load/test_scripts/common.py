@@ -1,7 +1,9 @@
 import os
+import re
 import abc
 import time
 import users
+import urllib2
 import mechanize
 from os import path
 from bs4 import BeautifulSoup
