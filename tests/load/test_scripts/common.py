@@ -98,6 +98,12 @@ class BaseTransaction(object):
     def get_list_of_users(self):
         return self.users
 
+    def get_session_key(self, browser):
+        r = browser.response()
+        if r:
+            m = re.search('sesskey=(\S+)', r.get_data())
+            return m.group(1) if m else None
+        return None
     def run(self):
         print "Custom timer before", self.custom_timers
         start_time = time.time()
