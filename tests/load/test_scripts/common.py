@@ -137,10 +137,16 @@ class BaseTransaction(object):
     @staticmethod
     def go_to_page(timer_registry, browser, relative_path, base_path=MOODLE_URL, params=None, timer_name=None,
                    sleep_time=0):
-        start_time = time.time()
-        print "PATH: %s" % path.join(base_path, relative_path)
-        resp = browser.open(path.join(base_path, relative_path))
-        latency = time.time() - start_time
-        timer_registry.add_timer(timer_name, start_time, latency, resp.code)
-        assert (resp.code == 200), 'Bad HTTP Response: ' + str(resp.code)
-        return resp
+        try:
+            start_time = time.time()
+            # print "PATH: %s" % path.join(base_path, relative_path)
+            resp = browser.open(path.join(base_path, relative_path))
+            latency = time.time() - start_time
+            timer_registry.add_timer(timer_name, start_time, latency, resp.code)
+            assert (resp.code == 200), 'Bad HTTP Response: ' + str(resp.code)
+            if sleep_time:
+                time.sleep(sleep_time)
+            return resp
+        except (urllib2.HTTPError, urllib2.URLError) as err:
+            print "ERROR: %r" % err
+            raise err
