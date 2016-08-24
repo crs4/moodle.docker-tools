@@ -129,6 +129,11 @@ class BaseTransaction(object):
         # print "Ending: %s" % str(transaction_flow_id)
         # print "Custom timer after", self.custom_timers
 
+        session_key = self.get_session_key(browser)
+        if session_key:
+            self.logout(timer_registry, browser)
+        return (browser, timer_registry, data)
+
     @staticmethod
     def go_to_page(timer_registry, browser, relative_path, base_path=MOODLE_URL, params=None, timer_name=None,
                    sleep_time=0):
