@@ -59,6 +59,18 @@ class BaseTransaction(object):
             count += 1
         return None
 
+    def _get_form_by_action(self, browser, action, disable_read_only=True, select_form=True):
+        count = 0
+        for f in browser.forms():
+            if f.attrs.has_key("action") and action in f.attrs["action"]:
+                if disable_read_only:
+                    f.set_all_readonly(False)
+                if select_form:
+                    browser.select_form(nr=count)
+                return f
+            count += 1
+        return None
+
     def _build_path(self, relative_url, base_path=MOODLE_URL, params={}):
         p = base_path + "/" + relative_url
         return p
