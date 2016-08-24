@@ -1,5 +1,5 @@
 import random
-from common import BaseTransaction
+from common import runner, BaseTransaction
 
 
 class Transaction(BaseTransaction):
@@ -24,13 +24,10 @@ class Transaction(BaseTransaction):
 
         login_form["username"] = user["username"]
         login_form["password"] = user["password"]
-
         browser.submit()
 
-        return browser
+        return (browser, {'user': user, 'session': self.get_session_key(browser)})
 
 
 if __name__ == '__main__':
-    trans = Transaction()
-    trans.run()
-    print trans.custom_timers
+    response = runner(Transaction)
