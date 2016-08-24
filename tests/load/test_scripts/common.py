@@ -150,3 +150,17 @@ class BaseTransaction(object):
         except (urllib2.HTTPError, urllib2.URLError) as err:
             print "ERROR: %r" % err
             raise err
+
+
+class RunnerResult:
+    def __init__(self, browser, timer_registry, data):
+        self.browser = browser
+        self.timer_registry = timer_registry
+        self.data = data
+
+
+def runner(Transaction):
+    trans = Transaction()
+    browser, timer_registry, data = trans.run()
+    print trans.custom_timers
+    return RunnerResult(browser, timer_registry, data)
