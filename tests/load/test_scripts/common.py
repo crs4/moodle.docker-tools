@@ -105,16 +105,17 @@ class BaseTransaction(object):
             return m.group(1) if m else None
         return None
     def run(self):
-        print "Custom timer before", self.custom_timers
+        # print "Custom timer before", self.custom_timers
         start_time = time.time()
         transaction_flow_id = "Transaction-" + self.transaction_name()
         timer_registry = TimerRegistry(self)
-        self.transaction_flow(timer_registry)
+        self._timer_registry = timer_registry
+        browser, data = self.transaction_flow(timer_registry)
         latency = time.time() - start_time
         timer_registry.add_timer("Transaction-" + self.transaction_name(), start_time, latency)
         timer_registry.write_timers_to_db()
-        print "Ending: %s" % str(transaction_flow_id)
-        print "Custom timer after", self.custom_timers
+        # print "Ending: %s" % str(transaction_flow_id)
+        # print "Custom timer after", self.custom_timers
 
     @staticmethod
     def go_to_page(timer_registry, browser, relative_path, base_path=MOODLE_URL, params=None, timer_name=None,
