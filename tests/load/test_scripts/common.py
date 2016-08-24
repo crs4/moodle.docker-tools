@@ -87,13 +87,13 @@ class BaseTransaction(object):
         page = BeautifulSoup(data, "html.parser")
         for script in page.findAll("script"):
             if script.get("src"):
-                print "loading %s" % script.get("src")
+                # print "loading %s" % script.get("src")
                 start_time = time.time()
                 browser.open_novisit(script.get("src"))
                 latency = time.time() - start_time
                 if timer_registry:
                     timer_registry.add_timer("LoadingScript", start_time, latency)
-                    print timer_registry._raw_timers
+                    # print timer_registry._raw_timers
 
     def get_list_of_users(self):
         return self.users
