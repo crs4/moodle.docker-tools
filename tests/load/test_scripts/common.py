@@ -104,6 +104,18 @@ class BaseTransaction(object):
             m = re.search('sesskey=(\S+)', r.get_data())
             return m.group(1) if m else None
         return None
+
+    def logout(self, timer_registry, browser):
+        session_key = self.get_session_key(browser)
+        if not session_key:
+            raise EnvironmentError("Session key not found")
+        BaseTransaction.go_to_page(timer_registry, browser, "login/logout.php?sesskey=" + session_key,
+                                   timer_name="Logout", sleep_time=1)
+        logout_form = self._get_form_by_action(browser, "logout.php")
+        if not logout_form:
+            raise EnvironmentError("Unable to find the logout form")
+        browser.submit()
+
     def run(self):
         # print "Custom timer before", self.custom_timers
         start_time = time.time()
