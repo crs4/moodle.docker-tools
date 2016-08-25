@@ -3,6 +3,7 @@ import re
 import abc
 import time
 import users
+import question
 import urllib2
 import logging
 import mechanize
@@ -31,14 +32,8 @@ class BaseTransaction(object):
 
     def __init__(self):
         self.custom_timers = {}
-        filename = users.USERS_FILENAME
-        if not os.path.isfile(filename):
-            base_path = os.path.dirname(__file__)
-            path = (base_path + "/../../") if base_path else '../../'
-            filename = path + filename
-            if not os.path.isfile(filename):
-                raise Exception("User list not found")
-        self.users = users.load_from_file(filename)
+        self.users = users.get_users()
+        self.questions = question.get_questions()
         self._logger = None
 
     @abc.abstractmethod
@@ -111,9 +106,6 @@ class BaseTransaction(object):
                 if timer_registry:
                     timer_registry.add_timer("LoadingScript", start_time, latency)
                     self.logger.debug(timer_registry._raw_timers)
-
-    def get_list_of_users(self):
-        return self.users
 
     def get_session_key(self, browser):
         r = browser.response()
