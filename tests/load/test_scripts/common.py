@@ -6,6 +6,7 @@ import users
 import urllib2
 import mechanize
 from os import path
+from aenum import Enum
 from bs4 import BeautifulSoup
 from urlparse import urlparse
 from settings import MOODLE_URL
@@ -21,6 +22,11 @@ def get_server_url(browser, moodle_relative_path="moodle"):
 
 class BaseTransaction(object):
     __metaclass__ = abc.ABCMeta
+
+    class RESOURCE_TYPE(Enum):
+        JAVASCRIPT = "script"
+        CSS = "link"
+        IMAGE = "img"
 
     def __init__(self):
         self.custom_timers = {}
