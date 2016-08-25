@@ -19,11 +19,11 @@ class Transaction(BaseTransaction):
 
         login_form.set_all_readonly(False)
 
-        user = random.choice(self.get_list_of_users())
+        user = random.choice(self.users)
         assert (user), "Error: unable to find a valid user"
 
-        login_form["username"] = user["username"]
-        login_form["password"] = user["password"]
+        login_form["username"] = user.username
+        login_form["password"] = user.password
         browser.submit()
 
         return (browser, {'user': user, 'session': self.get_session_key(browser), 'response': resp})
