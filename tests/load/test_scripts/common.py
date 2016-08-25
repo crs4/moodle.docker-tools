@@ -4,6 +4,7 @@ import abc
 import time
 import users
 import urllib2
+import logging
 import mechanize
 from os import path
 from aenum import Enum
@@ -38,6 +39,7 @@ class BaseTransaction(object):
             if not os.path.isfile(filename):
                 raise Exception("User list not found")
         self.users = users.load_from_file(filename)
+        self._logger = None
 
     @abc.abstractmethod
     def transaction_name(self):
@@ -46,6 +48,12 @@ class BaseTransaction(object):
     @abc.abstractmethod
     def transaction_flow(self):
         pass
+
+    @property
+    def logger(self):
+        if not self._logger:
+            self._logger = logging.getLogger(__name__ + "." + self.__class__.__name__)
+        return self._logger
 
     def _make_browser(self):
         browser = mechanize.Browser()
@@ -124,19 +132,19 @@ class BaseTransaction(object):
         if not logout_form:
             raise EnvironmentError("Unable to find the logout form")
         browser.submit()
+        self.logger.debug("User logout OK (sessionKey = %s) !!!", session_key)
 
     def run(self):
-        # print "Custom timer before", self.custom_timers
         start_time = time.time()
         transaction_flow_id = "Transaction-" + self.transaction_name()
+        self.logger.debug("Starting transaction: %s ...", transaction_flow_id)
         timer_registry = TimerRegistry(self)
         self._timer_registry = timer_registry
         browser, data = self.transaction_flow(timer_registry)
         latency = time.time() - start_time
         timer_registry.add_timer("Transaction-" + self.transaction_name(), start_time, latency)
         timer_registry.write_timers_to_db()
-        # print "Ending: %s" % str(transaction_flow_id)
-        # print "Custom timer after", self.custom_timers
+        self.logger.debug("Ending: %s", transaction_flow_id)
 
         session_key = self.get_session_key(browser)
         if session_key:
