@@ -26,7 +26,7 @@ class Transaction(BaseTransaction):
         login_form["password"] = user["password"]
         browser.submit()
 
-        return (browser, {'user': user, 'session': self.get_session_key(browser)})
+        return (browser, {'user': user, 'session': self.get_session_key(browser), 'response': resp})
 
 
 if __name__ == '__main__':
