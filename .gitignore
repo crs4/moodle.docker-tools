@@ -3,6 +3,9 @@
 
 *.pyc
 
+tests/datasets
+tests/users.csv
+tests/questions.csv
 tests/load/results
 tests/load/**/users.csv
 images/apache/moodle/*
