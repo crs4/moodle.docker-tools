@@ -2,8 +2,8 @@
 
 source ../config.sh
 
-mysqldump -h $(hostname) \
-          -u ${MYSQL_ROOT_PASSWORD} \
+mysqldump -h ${MYSQL_HOST} \
+          -u ${MYSQL_USER} \
           -p${MYSQL_PASSWORD}  \
           ${MYSQL_DATABASE} \
           > ${MYSQL_BACKUPS_DIR}/$(echo "$(date +'%d%m%Y-%H%M%S%3N').sql")
