@@ -24,4 +24,4 @@ ln -s ${DATASET_FOLDER}/users.csv users.csv
 shift
 
 # run tests
-locust -f load/locust/FirstTask.py --host=http://omero-test.crs4.it/moodle "$@"
+locust -f load/locust_scripts/tests.py --host=http://omero-test.crs4.it/moodle "$@"
