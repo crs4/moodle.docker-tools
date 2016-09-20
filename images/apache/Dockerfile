@@ -20,6 +20,7 @@ RUN cat /usr/local/bin/gitinfo.sh >> ~/.bashrc
 
 # update apache configuration
 RUN echo "ServerName localhost" >>  /etc/apache2/apache2.conf
+RUN echo "<Location \"/server-status\">\n\tSetHandler server-status\n\t#Require host example.com\n\tRequire all granted\n</Location>" >>  /etc/apache2/apache2.conf
 
 # Install GRUNT plugins
 RUN npm install -g grunt-cli
