@@ -6,6 +6,10 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # read general configuration
 source ${CURRENT_DIR}/../config.sh
 
+# server URL
+SERVER_NAME=$1
+shift
+
 # configure dataset
 DATASET=$1
 DATASET_FOLDER="${CURRENT_DIR}/datasets/${DATASET}"
@@ -14,6 +18,7 @@ if [ ! -d ${DATASET_FOLDER} ]; then
 	echo "DataSet ${DATASET} not found: folder ${DATASET_FOLDER} doesn't exist !!!"
 	exit -1
 fi
+shift
 
 # remove old links
 rm -r questions.csv users.csv
@@ -21,7 +26,5 @@ rm -r questions.csv users.csv
 ln -s ${DATASET_FOLDER}/questions.csv questions.csv
 ln -s ${DATASET_FOLDER}/users.csv users.csv
 
-shift
-
 # run tests
-locust -f load/locust_scripts/tests.py --host=http://omero-test.crs4.it/moodle "$@"
+locust -f load/locust_scripts/tests.py --host=http://${SERVER_NAME}/moodle "$@"
