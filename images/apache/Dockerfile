@@ -8,7 +8,7 @@ RUN apt-get update
 
 # Install Apache/MySQL/PHP and additional Software
 RUN apt-get update \
-    && apt-get -y install \
+    && apt-get -y --force-yes install \
        apache2 mysql-client php5 git-core nodejs-legacy npm \
        graphviz aspell php5-pspell nano \
        php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap clamav \
