@@ -60,7 +60,6 @@ class Login(BaseTaskSet):
                 self._logger.debug("Log in succeded: %r", user)
                 # self._stats.set('moodle.users.set', user.username)
                 self._stats.gauge('moodle.users.count', 1, delta=True)
-                self._stats.incr("moodle.users.countsec")
                 m = re.search('sesskey=(\S+)', response.content)
                 session_key = m.group(1) if m else None
                 if not session_key:
@@ -86,7 +85,6 @@ class Login(BaseTaskSet):
             else:
                 self._logger.debug("Logout succeded")
                 self._stats.gauge('moodle.users.count', -1, delta=True)
-                self._stats.decr("moodle.users.countsec")
 
 
 class MyTaskSet(BaseTaskSet):
