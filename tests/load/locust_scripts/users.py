@@ -5,7 +5,6 @@ import os
 import random
 import socket
 import string
-import MySQLdb
 import settings
 
 # module logger
@@ -67,6 +66,7 @@ def load_from_file(filename=settings.USERS_FILENAME, delimiter=',', as_dict=Fals
 
 
 def load_from_db(host, user, passwd, db):
+    import MySQLdb
     host = os.environ["MYSQL_HOST"] if not host else host
     user = os.environ["MYSQL_USER"] if not user else user
     passwd = os.environ["MYSQL_PASSWORD"] if not passwd else passwd
