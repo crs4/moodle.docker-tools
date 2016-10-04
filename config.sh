@@ -48,6 +48,7 @@ export DOCKERHUB_REPOSITORY="crs4"
 export DOCKERHUB_MYSQL_IMAGE="moodle-mysql"
 export DOCKERHUB_APACHE_IMAGE="moodle-apache-php"
 export DOCKERHUB_DROPBOX_IMAGE="moodle-dropbox"
+export DOCKERHUB_LOCUST_IMAGE="locust"
 
 # BACKUP folder
 export MYSQL_BACKUPS_DIR="${CURRENT_PATH}/Backups"
