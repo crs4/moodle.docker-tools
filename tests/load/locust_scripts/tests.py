@@ -6,7 +6,6 @@ import random
 import settings
 import logging
 import statsd
-from pyquery import PyQuery
 from locust import task, events, web, HttpLocust, TaskSet, InterruptTaskSet
 
 
