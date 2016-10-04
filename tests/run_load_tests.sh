@@ -26,5 +26,15 @@ rm -r questions.csv users.csv
 ln -s ${DATASET_FOLDER}/questions.csv questions.csv
 ln -s ${DATASET_FOLDER}/users.csv users.csv
 
+MODE=""
+MASTER_IP=$(getent hosts master | awk '{ print $1 }')
+if [[ ${1} = "slave" ]]; then
+    MODE="--slave --master-host=${MASTER_IP}"
+    shift
+elif [[ ${1} = "master" ]]; then
+    MODE="--master"
+    shift
+fi
+
 # run tests
-locust -f load/locust_scripts/tests.py --host=http://${SERVER_NAME}/moodle "$@"
+locust -f load/locust_scripts/tests.py ${MODE} --host=http://${SERVER_NAME}/moodle "$@"
