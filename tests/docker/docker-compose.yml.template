@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+
+  master:
+    image: "crs4/locust"
+    command: ["start.sh", "master", "http://omero-test.crs4.it/moodle", "/home/tester/docker-tools/tests/load/locust_scripts/tests.py", "/scripts/init.sh"]
+    volumes:
+      - ../datasets:/datasets
+      - ../docker:/scripts
+    networks:
+      back:
+        aliases:
+         - master
+    ports:
+        - "18086:8086"
+        - "18083:8083"
+        - "18088:8088"
+        - "18089:8089"
+        - "18090:10000"
+
+  slave:
+    image: "crs4/locust"
+    command: ["start.sh", "slave", "http://omero-test.crs4.it/moodle", "/home/tester/docker-tools/tests/load/locust_scripts/tests.py", "/scripts/init.sh"]
+    volumes:
+      - ../datasets:/datasets
+      - ../docker:/scripts
+    depends_on:
+      - master
+    links:
+      - "master"
+    networks:
+      - back
+
+networks:
+  back:
