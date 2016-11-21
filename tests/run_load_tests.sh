@@ -27,8 +27,8 @@ ln -s ${DATASET_FOLDER}/questions.csv questions.csv
 ln -s ${DATASET_FOLDER}/users.csv users.csv
 
 MODE=""
-MASTER_IP=$(getent hosts master | awk '{ print $1 }')
 if [[ ${1} = "slave" ]]; then
+    MASTER_IP=$(getent hosts master | awk '{ print $1 }')
     MODE="--slave --master-host=${MASTER_IP}"
     shift
 elif [[ ${1} = "master" ]]; then
