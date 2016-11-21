@@ -8,7 +8,7 @@ INIT_SCRIPT="/scripts/init.sh"
 DATASET_FOLDER="$(pwd)/../datasets"
 INIT_SCRIPT_FOLDER="$(pwd)/../docker"
 
-docker run -it \
+docker run -it --rm \
     -v ${DATASET_FOLDER}:"/datasets" \
     -v ${INIT_SCRIPT_FOLDER}:"/scripts" \
     -p "18086:8086"  \
