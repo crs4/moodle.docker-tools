@@ -61,6 +61,16 @@ while [ -n "$1" ]; do
                                 INFLUXDB_HOSTNAME="$2"
                                 shift
                                 ;;
+                        # update configuration file
+                        -f=* | --config=* )
+                                TELEGRAF_CONFIG_FILE="${OPT#*=}"
+                                shift
+                                ;;
+                        -f | --config )
+                                TELEGRAF_CONFIG_FILE="$2"
+                                shift
+                                ;;
+                        # help
                         -h* | --help )
                                 print_usage
                                 exit
@@ -88,20 +98,21 @@ done
 #### update telegraf config
 ######################################################################################################################
 # 1) TELEGRAF Hostname
-sed -i.bak "s/^\([[:space:]]*hostname = \).*/\1\"${TELEGRAF_HOSTNAME}\"/" /etc/telegraf/telegraf.conf
+sed -i.bak "s/^\([[:space:]]*hostname = \).*/\1\"${TELEGRAF_HOSTNAME}\"/" ${TELEGRAF_CONFIG_FILE}
 # 2) InfluxDB server
-sed -i.bak "s/\(http:\/\/\)master\(:8086\)/\1${INFLUXDB_HOSTNAME}\2/" /etc/telegraf/telegraf.conf
+sed -i.bak "s/\(http:\/\/\)master\(:8086\)/\1${INFLUXDB_HOSTNAME}\2/" ${TELEGRAF_CONFIG_FILE}
 # 3) Apache server
 if [[ -n ${APACHE_HOST} ]]; then
-    sed -i.bak "s/^#\([[inputs.apache]]\)/\1/" /etc/telegraf/telegraf.conf
-    sed -i.bak "s/^#apache_urls/    urls/" /etc/telegraf/telegraf.conf
-    sed -i.bak "s/\(http:\/\/\)localhost\/\(server-status?auto\)/\1${APACHE_HOST}\2/" /etc/telegraf/telegraf.conf
+    sed -i.bak "s/^#\([[inputs.apache]]\)/\1/" ${TELEGRAF_CONFIG_FILE}
+    sed -i.bak "s/^#apache_urls/    urls/" ${TELEGRAF_CONFIG_FILE}
+    sed -i.bak "s/\(http:\/\/\)localhost\/\(server-status?auto\)/\1${APACHE_HOST}\2/" ${TELEGRAF_CONFIG_FILE}
 fi
 ######################################################################################################################
 
 echo "Settings...."
-echo "Telegraf host: '${TELEGRAF_HOSTNAME}'"
-echo "Influxdb host: '${INFLUXDB_HOSTNAME}'"
+echo "Telegraf host:   '${TELEGRAF_HOSTNAME}'"
+echo "Telegraf config: '${TELEGRAF_CONFIG_FILE}'"
+echo "Influxdb host:   '${INFLUXDB_HOSTNAME}'"
 
 # start telegraf
-/usr/bin/telegraf -config /etc/telegraf/telegraf.conf -config-directory /etc/telegraf/telegraf.d
+/usr/bin/telegraf -config ${TELEGRAF_CONFIG_FILE} -config-directory /etc/telegraf/telegraf.d
