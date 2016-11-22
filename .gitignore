@@ -10,6 +10,8 @@ tests/load/results
 tests/load/**/users.csv
 images/apache/moodle/*
 images/apache/certs/*
+images/telegraf/telegraf.conf
+images/telegraf/telegraf.conf.bak
 docker-compose.yml
 
 Backups
