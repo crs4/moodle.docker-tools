@@ -100,7 +100,7 @@ done
 # 1) TELEGRAF Hostname
 sed -i.bak "s/^\([[:space:]]*hostname = \).*/\1\"${TELEGRAF_HOSTNAME}\"/" ${TELEGRAF_CONFIG_FILE}
 # 2) InfluxDB server
-sed -i.bak "s/\(http:\/\/\)master\(:8086\)/\1${INFLUXDB_HOSTNAME}\2/" ${TELEGRAF_CONFIG_FILE}
+sed -i.bak "s/\(http:\/\/\)master:8086/\1${INFLUXDB_HOSTNAME}/" ${TELEGRAF_CONFIG_FILE}
 # 3) Apache server
 if [[ -n ${APACHE_HOST} ]]; then
     sed -i.bak "s/^#\([[inputs.apache]]\)/\1/" ${TELEGRAF_CONFIG_FILE}
