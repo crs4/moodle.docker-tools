@@ -47,4 +47,4 @@ RUN mkdir -p /home/tester/
 WORKDIR /home/tester/
 
 # Expose ports
-EXPOSE 8086 8083 8088 8089
+EXPOSE 8025 8083 8086 8088 8089
