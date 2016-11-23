@@ -7,6 +7,7 @@ MODE=${1}
 WEB_APP_ADDRESS=${2//\//\\/}
 LOCUST_SCRIPT=${3//\//\\/}
 INIT_SCRIPT=${4}
+INFLUXDB_HOSTNAME=$(hostname)
 
 LOCUST_MODE=""
 MASTER_IP=$(getent hosts master | awk '{ print $1 }')
@@ -28,6 +29,8 @@ SUPERVISOR_CONF="/etc/supervisor/conf.d/${MODE}.conf"
 
 # update telegraf config
 sed -i.bak "s/^\([[:space:]]*hostname = \).*/\1\"${HOST}\"/" /etc/telegraf/telegraf.conf
+# update InfluxDB server
+sed -i.bak "s/\(http:\/\/\)master:8086/\1${INFLUXDB_HOSTNAME}/" /etc/telegraf/telegraf.conf
 
 # update supervisor config
 sed -i.bak "s/LOCUST_MODE/${LOCUST_MODE}/" ${SUPERVISOR_CONF}
