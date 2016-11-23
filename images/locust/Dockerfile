@@ -32,6 +32,9 @@ RUN sed -i.bak "s/^\([[:space:]]*ENABLED=\).*/\1\"true\"/" /etc/default/sysstat
 # COPY base telegraf configuration
 COPY telegraf.conf /etc/telegraf/telegraf.conf
 
+# COPY configuration
+COPY influxdb.conf /etc/influxdb/influxdb.conf
+
 # Add git info of the current Git Repository
 COPY gitinfo.sh /usr/local/bin
 RUN cat /usr/local/bin/gitinfo.sh >> ~/.bashrc
