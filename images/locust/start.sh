@@ -7,7 +7,7 @@ MODE=${1}
 WEB_APP_ADDRESS=${2//\//\\/}
 LOCUST_SCRIPT=${3//\//\\/}
 INIT_SCRIPT=${4}
-INFLUXDB_HOSTNAME=$(hostname)
+INFLUXDB_HOSTNAME="$(hostname):8086"
 
 LOCUST_MODE=""
 MASTER_IP=$(getent hosts master | awk '{ print $1 }')
