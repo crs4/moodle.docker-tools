@@ -29,6 +29,7 @@ fi
 
 # remove old links
 rm -r questions.csv users.csv
+
 # create new links
 ln -s ${DATASET_FOLDER}/questions.csv questions.csv
 ln -s ${DATASET_FOLDER}/users.csv users.csv
