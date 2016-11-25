@@ -21,9 +21,7 @@ RUN pip install --upgrade pip \
     && pip install jupyter
 
 # Copy supervisor configuration
-COPY local.conf /etc/supervisor/conf.d/local.conf
-COPY master.conf /etc/supervisor/conf.d/master.conf
-COPY slave.conf /etc/supervisor/conf.d/slave.conf
+COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
 # COPY and config sysstat
 COPY sysstat /etc/cron.d/sysstat
@@ -51,3 +49,6 @@ WORKDIR /home/tester/
 
 # Expose ports
 EXPOSE 8025 8083 8086 8088 8089
+
+# update entrypoint
+ENTRYPOINT ["/usr/local/bin/start.sh"]

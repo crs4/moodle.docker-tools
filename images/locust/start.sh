@@ -1,44 +1,137 @@
 #!/usr/bin/env bash
 
-echo $1 $2 $3 $4
+# print usage
+function print_usage(){
+    echo -e "\nUsage: start.sh [OPTIONS] [LOCUST_OPTIONS]"
+    echo -e   "                [-s|--setup-script FILE [SETUP_SCRIPT_ARGS]]"
+    echo -e "\n       OPTIONS: \n"
+    echo -e "\t  -d | --daemon           run as daemon"
+    echo -e "\t  -w | --web-app          URL of the Web Application to test"
+    echo -e "\t  -s | --setup-script     a bash script executed before Locust"
+    echo -e "\t  --influxdb              <HOST>:<PORT> of the InfluxDB instance (default 'localhost:8086')"
+    echo -e "\t  -h|--help               "
+}
 
-# parse param
-MODE=${1}
-WEB_APP_ADDRESS=${2//\//\\/}
-LOCUST_SCRIPT=${3//\//\\/}
-INIT_SCRIPT=${4}
-INFLUXDB_HOSTNAME="$(hostname):8086"
+# telegraf hostname
+TELEGRAF_HOSTNAME=$(hostname)
 
-LOCUST_MODE=""
-MASTER_IP=$(getent hosts master | awk '{ print $1 }')
-if [[ ${MODE} == "slave" ]]; then
-    HOST=$(hostname)
-    LOCUST_MODE="--slave --master-host=${MASTER_IP}"
-elif [[ ${MODE} == "master" ]]; then
-    HOST="master"
-    LOCUST_MODE="--master"
-elif [[ ${MODE} == "local" ]]; then
-    HOST="master"
-else
-    echo "Not valid parameter: ${1} !!! "
-    exit -1;
-fi
+# set default influxDB
+INFLUXDB_URL="localhost:8086"
+
+# parse arguments
+while [ -n "$1" ]; do
+        # Copy so we can modify it (can't modify $1)
+        OPT="$1"
+        # Detect argument termination
+        if [ x"$OPT" = x"--" ]; then
+                shift
+                for OPT ; do
+                        OTHER_OPTS="$OTHER_OPTS \"$OPT\""
+                done
+                break
+        fi
+        # Parse current opt
+        while [ x"$OPT" != x"-" ] ; do
+                case "$OPT" in
+                        # set daemon MODE
+                        -d | --daemon )
+                                DAEMON_MODE="true"
+                                ;;
+                        # telegraf hostname
+                        -n=* | --name=* )
+                                TELEGRAF_HOSTNAME="${OPT#*=}"
+                                shift
+                                ;;
+                        -n | --name )
+                                TELEGRAF_HOSTNAME="$2"
+                                shift
+                                ;;
+                        # set web app
+                        -w=* | --web-app=* )
+                                WEB_APP_ADDRESS="${OPT#*=}"
+                                shift
+                                ;;
+                        -w | --web-app )
+                                WEB_APP_ADDRESS="$2"
+                                shift
+                                ;;
+                        # setup script
+                        -s=* | --setup-script=* )
+                                SETUP_SCRIPT="${OPT#*=}"
+                                shift
+                                ;;
+                        -s | --setup-script )
+                                SETUP_SCRIPT="$2"
+                                shift
+                                ;;
+                        # help
+                        -h | --help )
+                                print_usage
+                                exit 0
+                                ;;
+                        # set InfluxDB
+                        --influxdb=* )
+                                INFLUXDB_URL="${OPT#*=}"
+                                shift
+                                ;;
+                        --influxdb )
+                                INFLUXDB_URL="$2"
+                                shift
+                                ;;
+                        -*=* )
+                                LOCUST_OPTIONS="$LOCUST_OPTIONS $OPT"
+                                ;;
+                        -*  )
+                                LOCUST_OPTIONS="$LOCUST_OPTIONS $1 $2"
+                                shift
+                                ;;
+                        # Anything unknown is recorded for later
+                        * )
+                                OTHER_OPTS="$OTHER_OPTS $OPT"
+                                break
+                                ;;
+                esac
+                # Check for multiple short options
+                # NOTICE: be sure to update this pattern to match valid options
+                NEXTOPT="${OPT#-[cfr]}" # try removing single short opt
+                if [ x"$OPT" != x"$NEXTOPT" ] ; then
+                        OPT="-$NEXTOPT"  # multiple short opts, keep going
+                else
+                        break  # long form, exit inner loop
+                fi
+        done
+        # move to the next param
+        shift
+done
+
+echo "Configuration ..."
+echo "TELEGRAF_HOSTNAME: ${TELEGRAF_HOSTNAME}"
+echo "DAEMON: ${DAEMON_MODE}"
+echo "WEBAPP: ${WEB_APP_ADDRESS}"
+echo "INFLUXDB: ${INFLUXDB_URL}"
+echo "SETUP_SCRIPT: $SETUP_SCRIPT"
+echo "LOCUST_OPTIONS: $LOCUST_OPTIONS"
+echo "OTHER: $OTHER_OPTS"
 
 # set the supervisor config file
-SUPERVISOR_CONF="/etc/supervisor/conf.d/${MODE}.conf"
+SUPERVISOR_CONF="/etc/supervisor/conf.d/supervisor.conf"
 
 # update telegraf config
-sed -i.bak "s/^\([[:space:]]*hostname = \).*/\1\"${HOST}\"/" /etc/telegraf/telegraf.conf
+sed -i.bak "s/^\([[:space:]]*hostname = \).*/\1\"${TELEGRAF_HOSTNAME}\"/" /etc/telegraf/telegraf.conf
 # update InfluxDB server
-sed -i.bak "s/\(http:\/\/\)master:8086/\1${INFLUXDB_HOSTNAME}/" /etc/telegraf/telegraf.conf
+sed -i.bak "s/\(http:\/\/\)master:8086/\1${INFLUXDB_URL}/" /etc/telegraf/telegraf.conf
 
 # update supervisor config
-sed -i.bak "s/LOCUST_MODE/${LOCUST_MODE}/" ${SUPERVISOR_CONF}
-sed -i.bak "s/LOCUST_SCRIPT/${LOCUST_SCRIPT}/" ${SUPERVISOR_CONF}
-sed -i.bak "s/WEB_APP_ADDRESS/${WEB_APP_ADDRESS}/" ${SUPERVISOR_CONF}
+#sed -i.bak "s/LOCUST_SCRIPT/${LOCUST_SCRIPT}/" ${SUPERVISOR_CONF}
+sed -i.bak "s,WEB_APP_ADDRESS,${WEB_APP_ADDRESS}," ${SUPERVISOR_CONF}
+sed -i.bak "s,LOCUST_OPTIONS,${LOCUST_OPTIONS}," ${SUPERVISOR_CONF}
 
 # run the initialization script
-${INIT_SCRIPT} dev
+if [[ -n ${SETUP_SCRIPT} ]]; then
+    ${SETUP_SCRIPT} ${OTHER_OPTS}
+fi
+
+
 
 # start supervisor
 /usr/bin/supervisord -n -c ${SUPERVISOR_CONF}
