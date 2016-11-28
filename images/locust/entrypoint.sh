@@ -2,7 +2,7 @@
 
 # print usage
 function print_usage(){
-    echo -e "\nUsage: start.sh [OPTIONS] [LOCUST_OPTIONS]"
+    echo -e "\nUsage: entrypoint.sh [OPTIONS] [LOCUST_OPTIONS]"
     echo -e   "                [-s|--setup-script FILE [SETUP_SCRIPT_ARGS]]"
     echo -e "\n       OPTIONS: \n"
     echo -e "\t  -d | --daemon           run as daemon"

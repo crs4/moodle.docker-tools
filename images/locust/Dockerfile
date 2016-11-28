@@ -38,7 +38,7 @@ COPY gitinfo.sh /usr/local/bin
 RUN cat /usr/local/bin/gitinfo.sh >> ~/.bashrc
 
 # Add start script
-COPY start.sh /usr/local/bin/start.sh
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # set terminal
 ENV TERM xterm
@@ -51,4 +51,4 @@ WORKDIR /home/tester/
 EXPOSE 8025 8083 8086 8088 8089
 
 # update entrypoint
-ENTRYPOINT ["/usr/local/bin/start.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
