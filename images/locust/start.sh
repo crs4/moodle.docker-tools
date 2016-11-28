@@ -141,7 +141,7 @@ echo -e " - Dataset: ${DATASET}"
 echo -e " - Dataset path: ${DATASET_FOLDER}"
 
 docker run ${MODE} ${VOLUME_OPTS} \
-    -v ${DATASET_FOLDER}:"/datasets" \
+    -v ${DATASET_FOLDER}:"/dataset" \
     -v ${SETUP_SCRIPT_FOLDER}:"/scripts" \
     -p "18086:8086"  \
     -p "18083:8083"  \
@@ -150,4 +150,4 @@ docker run ${MODE} ${VOLUME_OPTS} \
     -p "18090:10000" \
     ${IMAGE_NAME} \
     -w ${WEB_APP_ADDRESS} -f ${LOCUST_SCRIPT} \
-    -s "/scripts/${SETUP_SCRIPT}" ${DATASET}
+    -s "/scripts/${SETUP_SCRIPT}" "/dataset"

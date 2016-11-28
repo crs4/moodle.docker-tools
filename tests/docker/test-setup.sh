@@ -20,7 +20,8 @@ source ${CURRENT_DIR}/config.sh
 
 # configure dataset
 DATASET=$1
-DATASET_FOLDER="${CURRENT_DIR}/tests/datasets/${DATASET}"
+#DATASET_FOLDER="${CURRENT_DIR}/tests/datasets/${DATASET}"
+DATASET_FOLDER="${DATASET}"
 echo "DataSet folder: $DATASET_FOLDER..."
 if [ ! -d ${DATASET_FOLDER} ]; then
 	echo "DataSet ${DATASET} not found: folder ${DATASET_FOLDER} doesn't exist !!!"
