@@ -78,12 +78,25 @@ while [ -n "$1" ]; do
                                 INFLUXDB_URL="$2"
                                 shift
                                 ;;
+                        # timeout
+                        --timeout=* )
+                                TIMEOUT="${OPT#*=}"
+                                shift
+                                ;;
+                        --timeout )
+                                TIMEOUT="$2"
+                                shift
+                                ;;
                         -*=* )
                                 LOCUST_OPTIONS="$LOCUST_OPTIONS $OPT"
                                 ;;
                         -*  )
-                                LOCUST_OPTIONS="$LOCUST_OPTIONS $1 $2"
-                                shift
+                                if [[ $2 == -* ]]; then
+                                    LOCUST_OPTIONS="$LOCUST_OPTIONS $1"
+                                else
+                                    LOCUST_OPTIONS="$LOCUST_OPTIONS $1 $2"
+                                    shift
+                                fi
                                 ;;
                         # Anything unknown is recorded for later
                         * )
@@ -113,6 +126,10 @@ echo "SETUP_SCRIPT: $SETUP_SCRIPT"
 echo "LOCUST_OPTIONS: $LOCUST_OPTIONS"
 echo "OTHER: $OTHER_OPTS"
 
+# extract web server protocol and root
+WEB_PROTOCOL=${WEB_APP_ADDRESS%%://*}
+WEB_ROOT=$(x=${WEB_APP_ADDRESS##*//} && echo ${x%%/*})
+
 # set the supervisor config file
 SUPERVISOR_CONF="/etc/supervisor/conf.d/supervisor.conf"
 
@@ -120,6 +137,7 @@ SUPERVISOR_CONF="/etc/supervisor/conf.d/supervisor.conf"
 sed -i.bak "s/^\([[:space:]]*hostname = \).*/\1\"${TELEGRAF_HOSTNAME}\"/" /etc/telegraf/telegraf.conf
 # update InfluxDB server
 sed -i.bak "s/\(http:\/\/\)master:8086/\1${INFLUXDB_URL}/" /etc/telegraf/telegraf.conf
+sed -i.bak "s,\(http://\)localhost\(/server-status?auto\),$WEB_PROTOCOL://${WEB_ROOT}\2," /etc/telegraf/telegraf.conf
 
 # update supervisor config
 #sed -i.bak "s/LOCUST_SCRIPT/${LOCUST_SCRIPT}/" ${SUPERVISOR_CONF}
@@ -131,7 +149,28 @@ if [[ -n ${SETUP_SCRIPT} ]]; then
     ${SETUP_SCRIPT} ${OTHER_OPTS}
 fi
 
+# output folder
+OUTPUT_FOLDER="/results"
 
+# output folder
+mkdir -p ${OUTPUT_FOLDER}
 
-# start supervisor
-/usr/bin/supervisord -n -c ${SUPERVISOR_CONF}
+if [[ -n ${TIMEOUT} ]]; then
+    #
+    /etc/init.d/cron start &
+    /etc/init.d/sysstat start &
+    /usr/bin/influxd -pidfile /var/run/influxdb/influxd.pid -config /etc/influxdb/influxdb.conf &
+    /usr/bin/telegraf -config /etc/telegraf/telegraf.conf -config-directory /etc/telegraf/telegraf.d &
+    sleep 2
+    locust --logfile="${OUTPUT_FOLDER}/locust.log" --host=${WEB_APP_ADDRESS} ${LOCUST_OPTIONS} &
+    LOCUST_PID=$!
+    sleep ${TIMEOUT}
+    curl "http://localhost:8086/stop"
+    sleep 2
+    curl -o "${OUTPUT_FOLDER}/$(date +'%d%m%Y-%H%M%S').csv" "http://localhost:8086/stats/requests/csv"
+    sleep 2
+    kill -9 $LOCUST_PID
+else
+    # start supervisor
+    /usr/bin/supervisord -n -c ${SUPERVISOR_CONF}
+fi

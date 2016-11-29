@@ -17,6 +17,9 @@ MODE="-it --rm"
 NO_VOLUME="false"
 VOLUME_NAME="locust-influxdb-data"
 
+# default output folder
+OUTPUT_FOLDER="results"
+
 # parse arguments
 while [ -n "$1" ]; do
         # Copy so we can modify it (can't modify $1)
@@ -39,6 +42,15 @@ while [ -n "$1" ]; do
                         # set daemon MODE
                         -d | --daemon )
                                 MODE="-d"
+                                ;;
+                        # dataset folder
+                        -o | --output )
+                                OUTPUT_FOLDER="$2"
+                                shift
+                                ;;
+                        -o=* | --output=* )
+                                OUTPUT_FOLDER="${OPT#*=}"
+                                shift
                                 ;;
                         # dataset folder
                         --dataset )
@@ -130,24 +142,32 @@ fi
 DATASET_FOLDER="$( cd ${DATASET} && pwd )"
 DATASET=$(basename ${DATASET})
 
+# output folder initialization
+mkdir -p ${OUTPUT_FOLDER}
+OUTPUT_FOLDER="$( cd ${OUTPUT_FOLDER} && pwd )"
+
 echo -e "Configuration..."
 echo -e " - Mode: ${MODE}"
 echo -e " - Volume name: ${VOLUME_NAME}"
 echo -e " - Volume disabled: ${NO_VOLUME}"
+echo -e " - Locust options: ${OTHER_OPTS}"
 echo -e " - WebApp address: ${WEB_APP_ADDRESS}"
 echo -e " - Setup script: ${SETUP_SCRIPT}"
 echo -e " - Setup script path: ${SETUP_SCRIPT_FOLDER}"
 echo -e " - Dataset: ${DATASET}"
 echo -e " - Dataset path: ${DATASET_FOLDER}"
+echo -e " - Output path: ${OUTPUT_FOLDER}"
+echo -e "\n"
 
 docker run ${MODE} ${VOLUME_OPTS} \
     -v ${DATASET_FOLDER}:"/dataset" \
     -v ${SETUP_SCRIPT_FOLDER}:"/scripts" \
+    -v ${OUTPUT_FOLDER}:"/results" \
     -p "18086:8086"  \
     -p "18083:8083"  \
     -p "18088:8088"  \
     -p "18089:8089"  \
     -p "18090:10000" \
     ${IMAGE_NAME} \
-    -w ${WEB_APP_ADDRESS} -f ${LOCUST_SCRIPT} \
+    -w ${WEB_APP_ADDRESS} -f ${LOCUST_SCRIPT} ${OTHER_OPTS} \
     -s "/scripts/${SETUP_SCRIPT}" "/dataset"
