@@ -34,7 +34,7 @@ function collect_outputs(){
     # collect locust stats
     collect_locust_stats ${locust_server_url} ${output_file_prefix}
     # collect stats from influxdb
-    host_info=("cpu" "disk" "diskio" "inode" "io" "mem" "network" "processes")
+    host_info=("cpu" "disk" "diskio" "inode" "io" "mem" "network" "processes" "apache")
     for info in "${host_info[@]}"
     do
         collect_output ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
