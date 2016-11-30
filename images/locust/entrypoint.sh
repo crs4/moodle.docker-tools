@@ -129,6 +129,13 @@ echo "SETUP_SCRIPT: $SETUP_SCRIPT"
 echo "LOCUST_OPTIONS: $LOCUST_OPTIONS"
 echo "OTHER: $OTHER_OPTS"
 
+# output folder & file
+OUTPUT_FOLDER="/results"
+LOCUST_LOG_FILE=${OUTPUT_FOLDER}/locust.log
+
+# output folder
+mkdir -p ${OUTPUT_FOLDER}
+
 # extract web server protocol and root
 WEB_PROTOCOL=${WEB_APP_ADDRESS%%://*}
 WEB_ROOT=$(x=${WEB_APP_ADDRESS##*//} && echo ${x%%/*})
@@ -147,8 +154,6 @@ if [[ -n ${SETUP_SCRIPT} ]]; then
     ${SETUP_SCRIPT} ${OTHER_OPTS}
 fi
 
-# output folder
-OUTPUT_FOLDER="/results"
 
 
 if [[ -n ${TIMEOUT} ]]; then
