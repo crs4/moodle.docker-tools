@@ -22,14 +22,22 @@ USERS=($(seq 10 10 300))
 # output folder
 OUTPUT_FOLDER="results"
 
+# set sleep time
+SLEEP_TIME=$((2 * 60))
+
 # run and collect results
 for users in "${USERS[@]}"
 do
-    echo "Running with $users..."
+    echo -e "\nRunning with ${users} users..."
     ${DOCKER_SCRIPT} -s ${SETUP_SCRIPT} \
                      -w ${WEB_SERVER} \
                      --dataset ${DATASET} \
                      -o "${OUTPUT_FOLDER}/${users}" \
                      --timeout ${EXECUTION_TIME} \
                      -c ${users} -r ${users} --no-web
+    # wait for next test
+    if [[ ${users} != ${USERS[*]: -1} ]]; then
+        echo -e "\nWaiting for test to start..."
+        sleep ${SLEEP_TIME}
+    fi
 done
