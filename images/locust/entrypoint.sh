@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# import utils
+source /usr/local/bin/stats_utils.sh
+
 # print usage
 function print_usage(){
     echo -e "\nUsage: entrypoint.sh [OPTIONS] [LOCUST_OPTIONS]"
@@ -152,38 +155,6 @@ fi
 # output folder
 OUTPUT_FOLDER="/results"
 
-# output folder
-mkdir -p ${OUTPUT_FOLDER}
-
-# function to collect locust stats
-function collect_locust_stats(){
-    local test_name="${1}"
-    curl -o "${OUTPUT_FOLDER}/${test_name}.csv" "http://localhost:8086/stats/requests/csv"
-}
-
-# function to collect influxdb stats
-function collect_output(){
-    local test_name="${1}"
-    local info="${2}"
-    influxdb_endpoint="http://localhost:8086/query?pretty=true"
-    curl -o "${OUTPUT_FOLDER}/${test_name}-${info}.json" \
-        -G ${influxdb_endpoint} \
-        --data-urlencode "db=telegraf" \
-        --data-urlencode "q=SELECT * FROM \"${info}\" WHERE \"time\">'${start_time}' AND \"time\"<'${end_time}'"
-}
-
-# function to collect stats
-function collect_outputs(){
-    local test_name="${1}"
-    # collect locust stats
-    collect_locust_stats ${test_name}
-    # collect stats from influxdb
-    host_info=("cpu" "disk" "diskio" "inode" "io" "mem" "network" "processes")
-    for info in "${host_info[@]}"
-    do
-        collect_output ${test_name} ${info}
-    done;
-}
 
 if [[ -n ${TIMEOUT} ]]; then
     #
@@ -214,4 +185,7 @@ if [[ -n ${TIMEOUT} ]]; then
 else
     # start supervisor
     /usr/bin/supervisord -n -c ${SUPERVISOR_CONF}
+# download stats from locust
+collect_outputs ${test_name}
+
 fi

@@ -37,6 +37,9 @@ COPY influxdb.conf /etc/influxdb/influxdb.conf
 COPY gitinfo.sh /usr/local/bin
 RUN cat /usr/local/bin/gitinfo.sh >> ~/.bashrc
 
+# Add stats_utils
+COPY stats_utils.sh /usr/local/bin/stats_utils.sh
+
 # Add start script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
