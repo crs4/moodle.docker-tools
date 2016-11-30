@@ -39,4 +39,10 @@ function collect_outputs(){
     do
         collect_output ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
     done;
+    # FIXME: to be generalized
+    moodle_info=("moodle_home" "moodle_image_loadDZI" "moodle_image_loadTile" "moodle_login_index" "moodle_login_submit" "moodle_logut_submit" "moodle_question_loadinfo" "moodle_users_count")
+    for info in "${moodle_info[@]}"
+    do
+        collect_output ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
+    done;
 }
