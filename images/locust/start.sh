@@ -13,6 +13,9 @@ DATASET="../../tests/datasets/dev"
 # default mode
 MODE="--rm"
 
+# default docker container name
+DOCKER_CONTAINER_HOSTNAME="$(hostname)-docker"
+
 # default volume
 NO_VOLUME="false"
 VOLUME_NAME="locust-influxdb-data"
@@ -163,6 +166,7 @@ docker run ${MODE} ${VOLUME_OPTS} \
     -v ${DATASET_FOLDER}:"/dataset" \
     -v ${SETUP_SCRIPT_FOLDER}:"/scripts" \
     -v ${OUTPUT_FOLDER}:"/results" \
+    -h ${DOCKER_CONTAINER_HOSTNAME} \
     -p "18086:8086"  \
     -p "18083:8083"  \
     -p "18088:8088"  \
