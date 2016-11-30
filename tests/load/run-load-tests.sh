@@ -14,11 +14,10 @@ WEB_SERVER="http://cytest.crs4.it/moodle"
 DATASET="../../tests/datasets/prod"
 
 # set execution time
-EXECUTION_TIME=$((20))
+EXECUTION_TIME=$((10 * 60))
 
 # set list of number of users
-#USERS=($(seq 10 10 300))
-USERS=($(seq 1 10 1))
+USERS=($(seq 10 10 300))
 
 # output folder
 OUTPUT_FOLDER="results"
