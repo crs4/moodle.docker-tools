@@ -11,7 +11,7 @@ SETUP_SCRIPT="../../tests/docker/test-setup.sh"
 DATASET="../../tests/datasets/dev"
 
 # default mode
-MODE="-it --rm"
+MODE="--rm"
 
 # default volume
 NO_VOLUME="false"
