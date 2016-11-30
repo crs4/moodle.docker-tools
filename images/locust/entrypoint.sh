@@ -225,6 +225,8 @@ collect_outputs "http://localhost:8089" "http://localhost:8086" ${OUTPUT_FOLDER}
 echo -e "Start: ${start_time}\nEnd: ${end_time}\nLocust: ${LOCUST_OPTIONS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
 echo -e "Locust Script: ${LOCUST_SCRIPT}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
 echo -e "WebApp: ${WEB_APP_ADDRESS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
+echo -e "Clients: ${CLIENTS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
+echo -e "Hatch rate: ${HATCH_RATE}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
 
 # kill pending processes
 if [[ -n ${LOCUST_PID} ]]; then
