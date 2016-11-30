@@ -155,8 +155,40 @@ OUTPUT_FOLDER="/results"
 # output folder
 mkdir -p ${OUTPUT_FOLDER}
 
+# function to collect locust stats
+function collect_locust_stats(){
+    local test_name="${1}"
+    curl -o "${OUTPUT_FOLDER}/${test_name}.csv" "http://localhost:8086/stats/requests/csv"
+}
+
+# function to collect influxdb stats
+function collect_output(){
+    local test_name="${1}"
+    local info="${2}"
+    influxdb_endpoint="http://localhost:8086/query?pretty=true"
+    curl -o "${OUTPUT_FOLDER}/${test_name}-${info}.json" \
+        -G ${influxdb_endpoint} \
+        --data-urlencode "db=telegraf" \
+        --data-urlencode "q=SELECT * FROM \"${info}\" WHERE \"time\">'${start_time}' AND \"time\"<'${end_time}'"
+}
+
+# function to collect stats
+function collect_outputs(){
+    local test_name="${1}"
+    # collect locust stats
+    collect_locust_stats ${test_name}
+    # collect stats from influxdb
+    host_info=("cpu" "disk" "diskio" "inode" "io" "mem" "network" "processes")
+    for info in "${host_info[@]}"
+    do
+        collect_output ${test_name} ${info}
+    done;
+}
+
 if [[ -n ${TIMEOUT} ]]; then
     #
+    test_name=$(date +'%Y%m%d%H%M%S')
+    start_time=$(date +'%Y-%m-%d %H:%M:%S')
     /etc/init.d/cron start &
     /etc/init.d/sysstat start &
     /usr/bin/influxd -pidfile /var/run/influxdb/influxd.pid -config /etc/influxdb/influxdb.conf &
@@ -167,7 +199,16 @@ if [[ -n ${TIMEOUT} ]]; then
     sleep ${TIMEOUT}
     curl "http://localhost:8086/stop"
     sleep 2
-    curl -o "${OUTPUT_FOLDER}/$(date +'%d%m%Y-%H%M%S').csv" "http://localhost:8086/stats/requests/csv"
+    end_time=$(date +'%Y-%m-%d %H:%M:%S')
+
+    # write test configuration
+    echo -e "Start: ${start_time}\nEnd: ${end_time}\nLocust: ${LOCUST_OPTIONS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
+    echo -e "Locust Script: ${LOCUST_SCRIPT}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
+    echo -e "WebApp: ${WEB_APP_ADDRESS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
+
+    # download stats from locust
+    collect_outputs ${test_name}
+
     sleep 2
     kill -9 $LOCUST_PID
 else
