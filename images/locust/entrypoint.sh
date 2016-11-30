@@ -171,7 +171,7 @@ if [[ -n ${TIMEOUT} ]]; then
     sleep ${TIMEOUT}
 else
     # start locust
-    locust --host=${WEB_APP_ADDRESS} --logfile=${LOCUST_LOG_FILE} ${LOCUST_OPTIONS}
+    locust --host=${WEB_APP_ADDRESS} ${LOCUST_OPTIONS}
 fi
 
 # stop locust
