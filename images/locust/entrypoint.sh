@@ -142,11 +142,6 @@ sed -i.bak "s/^\([[:space:]]*hostname = \).*/\1\"${TELEGRAF_HOSTNAME}\"/" /etc/t
 sed -i.bak "s/\(http:\/\/\)master:8086/\1${INFLUXDB_URL}/" /etc/telegraf/telegraf.conf
 sed -i.bak "s,\(http://\)localhost\(/server-status?auto\),$WEB_PROTOCOL://${WEB_ROOT}\2," /etc/telegraf/telegraf.conf
 
-# update supervisor config
-#sed -i.bak "s/LOCUST_SCRIPT/${LOCUST_SCRIPT}/" ${SUPERVISOR_CONF}
-sed -i.bak "s,WEB_APP_ADDRESS,${WEB_APP_ADDRESS}," ${SUPERVISOR_CONF}
-sed -i.bak "s,LOCUST_OPTIONS,${LOCUST_OPTIONS}," ${SUPERVISOR_CONF}
-
 # run the initialization script
 if [[ -n ${SETUP_SCRIPT} ]]; then
     ${SETUP_SCRIPT} ${OTHER_OPTS}
