@@ -154,38 +154,44 @@ if [[ -n ${SETUP_SCRIPT} ]]; then
     ${SETUP_SCRIPT} ${OTHER_OPTS}
 fi
 
+# test name
+test_name=$(date +'%Y%m%d%H%M%S')
+# start time
+start_time=$(date +'%Y-%m-%d %H:%M:%S')
 
+# start supervisor (influxdb, telegraf, sysstat)
+/usr/bin/supervisord -c ${SUPERVISOR_CONF}
+SUPERVISOR_PID=$!
 
+# wait for exit (timeout or keyboard interrupt)
 if [[ -n ${TIMEOUT} ]]; then
-    #
-    test_name=$(date +'%Y%m%d%H%M%S')
-    start_time=$(date +'%Y-%m-%d %H:%M:%S')
-    /etc/init.d/cron start &
-    /etc/init.d/sysstat start &
-    /usr/bin/influxd -pidfile /var/run/influxdb/influxd.pid -config /etc/influxdb/influxdb.conf &
-    /usr/bin/telegraf -config /etc/telegraf/telegraf.conf -config-directory /etc/telegraf/telegraf.d &
-    sleep 2
-    locust --logfile="${OUTPUT_FOLDER}/locust.log" --host=${WEB_APP_ADDRESS} ${LOCUST_OPTIONS} &
+    # start locust
+    locust --host=${WEB_APP_ADDRESS} --logfile=${LOCUST_LOG_FILE} ${LOCUST_OPTIONS} &
     LOCUST_PID=$!
     sleep ${TIMEOUT}
-    curl "http://localhost:8086/stop"
-    sleep 2
-    end_time=$(date +'%Y-%m-%d %H:%M:%S')
-
-    # write test configuration
-    echo -e "Start: ${start_time}\nEnd: ${end_time}\nLocust: ${LOCUST_OPTIONS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
-    echo -e "Locust Script: ${LOCUST_SCRIPT}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
-    echo -e "WebApp: ${WEB_APP_ADDRESS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
-
-    # download stats from locust
-    collect_outputs ${test_name}
-
-    sleep 2
-    kill -9 $LOCUST_PID
 else
-    # start supervisor
-    /usr/bin/supervisord -n -c ${SUPERVISOR_CONF}
+    # start locust
+    locust --host=${WEB_APP_ADDRESS} --logfile=${LOCUST_LOG_FILE} ${LOCUST_OPTIONS}
+fi
+
+# stop locust
+curl "http://localhost:8086/stop"
+
+# end time
+end_time=$(date +'%Y-%m-%d %H:%M:%S')
+
 # download stats from locust
 collect_outputs ${test_name}
 
+# write test configuration
+echo -e "Start: ${start_time}\nEnd: ${end_time}\nLocust: ${LOCUST_OPTIONS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
+echo -e "Locust Script: ${LOCUST_SCRIPT}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
+echo -e "WebApp: ${WEB_APP_ADDRESS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
+
+# kill pending processes
+if [[ -n ${LOCUST_PID} ]]; then
+    kill -9 ${LOCUST_PID}
+fi
+if [[ -n ${SUPERVISOR_PID} ]]; then
+    kill -9 ${SUPERVISOR_PID}
 fi
