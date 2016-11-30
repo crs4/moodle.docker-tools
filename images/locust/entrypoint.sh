@@ -49,6 +49,10 @@ while [ -n "$1" ]; do
                                 TELEGRAF_HOSTNAME="$2"
                                 shift
                                 ;;
+                        # disable Web UI
+                        --no-web )
+                                NO_WEB="true"
+                                ;;
                         # set web app
                         -w=* | --web-app=* )
                                 WEB_APP_ADDRESS="${OPT#*=}"
@@ -56,6 +60,25 @@ while [ -n "$1" ]; do
                                 ;;
                         -w | --web-app )
                                 WEB_APP_ADDRESS="$2"
+                                shift
+                                ;;
+                        # clients
+                        -c=* | --clients=* )
+                                CLIENTS="${OPT#*=}"
+                                shift
+                                ;;
+                        -c | --clients )
+                                CLIENTS="$2"
+                                shift
+                                ;;
+
+                        # hatch rate
+                        -r=* | --hatch-rate=* )
+                                HATCH_RATE="${OPT#*=}"
+                                shift
+                                ;;
+                        -r | --hatch-rate )
+                                HATCH_RATE="$2"
                                 shift
                                 ;;
                         # setup script
@@ -126,6 +149,8 @@ echo "DAEMON: ${DAEMON_MODE}"
 echo "WEBAPP: ${WEB_APP_ADDRESS}"
 echo "INFLUXDB: ${INFLUXDB_URL}"
 echo "SETUP_SCRIPT: $SETUP_SCRIPT"
+echo "CLIENTS: ${CLIENTS}"
+echo "HATCH RATE: ${HATCH_RATE}"
 echo "LOCUST_OPTIONS: $LOCUST_OPTIONS"
 echo "OTHER: $OTHER_OPTS"
 
@@ -163,25 +188,38 @@ start_time=$(date +'%Y-%m-%d %H:%M:%S')
 /usr/bin/supervisord -c ${SUPERVISOR_CONF}
 SUPERVISOR_PID=$!
 
+# start locust
+locust --host=${WEB_APP_ADDRESS} --logfile=${LOCUST_LOG_FILE} --print-stats ${LOCUST_OPTIONS} &
+LOCUST_PID=$!
+sleep 2
+
+# handle the no-web mode
+if [[ ${NO_WEB} == "true" ]]; then
+    if [[ (-z ${CLIENTS}) || (-z ${HATCH_RATE}) ]]; then
+        echo -e "\nError: with '--no-web' you have to provide -c [CLIENTS] and -r [HATCH_RATE] options!\n"
+        exit -1
+    fi
+    curl --data "hatch_rate=${HATCH_RATE}&locust_count=${CLIENTS}" http://localhost:8089/swarm
+fi
+
 # wait for exit (timeout or keyboard interrupt)
 if [[ -n ${TIMEOUT} ]]; then
-    # start locust
-    locust --host=${WEB_APP_ADDRESS} --logfile=${LOCUST_LOG_FILE} ${LOCUST_OPTIONS} &
-    LOCUST_PID=$!
     sleep ${TIMEOUT}
 else
-    # start locust
-    locust --host=${WEB_APP_ADDRESS} ${LOCUST_OPTIONS}
+    EXIT=0
+    exiting(){ echo "exiting..."; EXIT=1; }
+    trap exiting SIGINT
+    while [[ ${EXIT} -eq 0 ]]; do sleep 2; done
 fi
 
 # stop locust
-curl "http://localhost:8086/stop"
+curl "http://localhost:8089/stop"
 
 # end time
 end_time=$(date +'%Y-%m-%d %H:%M:%S')
 
 # download stats from locust
-collect_outputs ${test_name}
+collect_outputs "http://localhost:8089" "http://localhost:8086" ${OUTPUT_FOLDER}/${test_name} ${start_time} ${end_time}
 
 # write test configuration
 echo -e "Start: ${start_time}\nEnd: ${end_time}\nLocust: ${LOCUST_OPTIONS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
