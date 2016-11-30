@@ -182,7 +182,7 @@ fi
 # test name
 test_name=$(date +'%Y%m%d%H%M%S')
 # start time
-start_time=$(date +'%Y-%m-%d %H:%M:%S')
+start_time=$(date +'%Y-%m-%d@%H:%M:%S')
 
 # start supervisor (influxdb, telegraf, sysstat)
 /usr/bin/supervisord -c ${SUPERVISOR_CONF}
@@ -216,7 +216,7 @@ fi
 curl "http://localhost:8089/stop"
 
 # end time
-end_time=$(date +'%Y-%m-%d %H:%M:%S')
+end_time=$(date +'%Y-%m-%d@%H:%M:%S')
 
 # download stats from locust
 collect_outputs "http://localhost:8089" "http://localhost:8086" ${OUTPUT_FOLDER}/${test_name} ${start_time} ${end_time}

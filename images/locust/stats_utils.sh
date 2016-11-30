@@ -13,8 +13,10 @@ function collect_output(){
     local influxdb_server_url="${1}"
     local output_file_prefix="${2}"
     local info="${3}"
-    local start_time="${4}"
-    local end_time="${5}"
+    local start_time="${4/@/ }"
+    local end_time="${5/@/ }"
+    echo "START: ${start_time}"
+    echo "END: ${end_time}"
     influxdb_endpoint="${influxdb_server_url}/query?pretty=true"
     curl -o "${output_file_prefix}-${info}.json" \
         -G ${influxdb_endpoint} \
