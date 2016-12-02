@@ -5,7 +5,7 @@ set -e
 IMAGE_NAME="crs4/locust"
 WEB_APP_ADDRESS="http://omero-test.crs4.it/moodle"
 LOCUST_SCRIPT="/home/tester/docker-tools/tests/load/locust_scripts/tests.py"
-SETUP_SCRIPT="../../tests/docker/test-setup.sh"
+SETUP_SCRIPT="../../tests/load/load-test-setup.sh"
 
 # default TEST
 DATASET="../../tests/datasets/dev"
