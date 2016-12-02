@@ -9,7 +9,6 @@ SETUP_SCRIPT="load-test-setup.sh"
 
 # web server
 WEB_SERVER="http://cytest.crs4.it/moodle"
-OMERO_SERVER="http://ome-cytest.crs4.it:8080"
 
 # Question DATASET
 DATASET="../../tests/datasets/prod"
@@ -45,10 +44,10 @@ do
     end_time=$(date +'%Y-%m-%d@%H:%M:%S')
 
     # moodle stats
-    collect_stats ${WEB_SERVER} ${OUTPUT_FOLDER}/moodle \
+    collect_stats "http://cytest.crs4.it:8086" ${OUTPUT_FOLDER}/${users}/moodle \
             ${start_time} ${end_time} host-stats.conf
     # omero stats
-    collect_stats ${OMERO_SERVER} ${OUTPUT_FOLDER}/omero \
+    collect_stats "http://ome-cytest.crs4.it:8086" ${OUTPUT_FOLDER}/${users}/omero \
             ${start_time} ${end_time} host-stats.conf
 
     # wait for next test

@@ -15,6 +15,7 @@ function collect_stat(){
     local info="${3}"
     local start_time="${4/@/ }"
     local end_time="${5/@/ }"
+    echo "Getting '${info}' stats ..."
     echo "START: ${start_time}"
     echo "END: ${end_time}"
     influxdb_endpoint="${influxdb_server_url}/query?pretty=true"
