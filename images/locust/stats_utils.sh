@@ -9,7 +9,7 @@ function collect_locust_stats(){
 }
 
 # function to collect influxdb stats
-function collect_output(){
+function collect_stat(){
     local influxdb_server_url="${1}"
     local output_file_prefix="${2}"
     local info="${3}"
@@ -25,16 +25,12 @@ function collect_output(){
 }
 
 # function to collect stats
-function collect_outputs(){
-    local locust_server_url="${1}"
-    local influxdb_server_url="${2}"
-    local output_file_prefix="${3}"
-    local start_time="${4}"
-    local end_time="${5}"
-    local config="${6}"
-
-    # collect locust stats
-    collect_locust_stats ${locust_server_url} ${output_file_prefix}
+function collect_stats(){
+    local influxdb_server_url="${1}"
+    local output_file_prefix="${2}"
+    local start_time="${3}"
+    local end_time="${4}"
+    local config="${5}"
 
     # collect influxdb stats
     if [[ -z ${config} ]]; then
@@ -46,7 +42,7 @@ function collect_outputs(){
                 info=($line)
                 for info in "${info[@]}"
                 do
-                    collect_output ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
+                    collect_stat ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
                 done;
             fi
         done < "${config}"

@@ -228,9 +228,12 @@ curl "http://localhost:8089/stop"
 # end time
 end_time=$(date +'%Y-%m-%d@%H:%M:%S')
 
+# collect locust stats
+collect_locust_stats "http://localhost:8089" ${OUTPUT_FOLDER}/${test_name}
+
 # download stats from locust
-collect_outputs \
-    "http://localhost:8089" "http://localhost:8086" ${OUTPUT_FOLDER}/${test_name} \
+collect_stats \
+    "http://localhost:8086" ${OUTPUT_FOLDER}/${test_name} \
     ${start_time} ${end_time} \
     ${STATS_CONF}
 
