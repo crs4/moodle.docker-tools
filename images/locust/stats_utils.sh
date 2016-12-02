@@ -31,18 +31,26 @@ function collect_outputs(){
     local output_file_prefix="${3}"
     local start_time="${4}"
     local end_time="${5}"
+    local config="${6}"
+
     # collect locust stats
     collect_locust_stats ${locust_server_url} ${output_file_prefix}
-    # collect stats from influxdb
-    host_info=("cpu" "disk" "diskio" "inode" "io" "mem" "network" "processes" "apache")
-    for info in "${host_info[@]}"
-    do
-        collect_output ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
-    done;
-    # FIXME: to be generalized
-    moodle_info=("moodle_home" "moodle_image_loadDZI" "moodle_image_loadTile" "moodle_login_index" "moodle_login_submit" "moodle_logut_submit" "moodle_question_loadinfo" "moodle_users_count")
-    for info in "${moodle_info[@]}"
-    do
-        collect_output ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
-    done;
+
+    # collect influxdb stats
+    if [[ -z ${config} ]]; then
+        echo -e "\nWARNING: no config file to collect stats!\n"
+    elif [[ -f ${config} ]]; then
+        while IFS='' read -r line || [[ -n "$line" ]]; do
+            echo -e "\nList of fields: $line"
+            if [[ $line != "#*" ]]; then
+                info=($line)
+                for info in "${info[@]}"
+                do
+                    collect_output ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
+                done;
+            fi
+        done < "${config}"
+    else
+        echo -e "ERROR: file '$config' doesn't exist!"
+    fi
 }
