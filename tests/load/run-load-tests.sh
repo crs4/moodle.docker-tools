@@ -33,6 +33,7 @@ do
                      -w ${WEB_SERVER} \
                      --dataset ${DATASET} \
                      -o "${OUTPUT_FOLDER}/${users}" \
+                     --stats-conf stats.conf \
                      --timeout ${EXECUTION_TIME} \
                      -c ${users} -r ${users} --no-web
     # wait for next test

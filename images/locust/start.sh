@@ -64,6 +64,15 @@ while [ -n "$1" ]; do
                                 DATASET="${OPT#*=}"
                                 shift
                                 ;;
+                        # stats conf
+                        --stats-conf=* )
+                                STATS_CONF="${OPT#*=}"
+                                shift
+                                ;;
+                        --stats-conf )
+                                STATS_CONF="$2"
+                                shift
+                                ;;
                         # set web app
                         -l=* | --locust-script=* )
                                 LOCUST_SCRIPT="${OPT#*=}"
@@ -128,6 +137,11 @@ if [[ ${NO_VOLUME} == "false" ]]; then
     VOLUME_OPTS="-v ${VOLUME_NAME}:/var/lib/influxdb"
 fi
 
+if [[ -n ${STATS_CONF} ]]; then
+    STATS_CONF_PATH="$( cd "$( dirname ${STATS_CONF} )" && pwd )"
+    VOLUME_OPTS="-v ${STATS_CONF_PATH}:/stats ${VOLUME_OPTS}"
+    OTHER_OPTS="--stats-conf /stats/$(basename ${STATS_CONF}) ${OTHER_OPTS}"
+fi
 
 #
 if [[ ! -f ${SETUP_SCRIPT} ]]; then

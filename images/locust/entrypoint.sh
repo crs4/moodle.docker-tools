@@ -90,6 +90,15 @@ while [ -n "$1" ]; do
                                 SETUP_SCRIPT="$2"
                                 shift
                                 ;;
+                        # stats conf
+                        --stats-conf=* )
+                                STATS_CONF="${OPT#*=}"
+                                shift
+                                ;;
+                        --stats-conf )
+                                STATS_CONF="$2"
+                                shift
+                                ;;
                         # help
                         -h | --help )
                                 print_usage
@@ -149,6 +158,7 @@ echo "DAEMON: ${DAEMON_MODE}"
 echo "WEBAPP: ${WEB_APP_ADDRESS}"
 echo "INFLUXDB: ${INFLUXDB_URL}"
 echo "SETUP_SCRIPT: $SETUP_SCRIPT"
+echo "STATS_CONF: $STATS_CONF"
 echo "CLIENTS: ${CLIENTS}"
 echo "HATCH RATE: ${HATCH_RATE}"
 echo "LOCUST_OPTIONS: $LOCUST_OPTIONS"
@@ -219,7 +229,10 @@ curl "http://localhost:8089/stop"
 end_time=$(date +'%Y-%m-%d@%H:%M:%S')
 
 # download stats from locust
-collect_outputs "http://localhost:8089" "http://localhost:8086" ${OUTPUT_FOLDER}/${test_name} ${start_time} ${end_time}
+collect_outputs \
+    "http://localhost:8089" "http://localhost:8086" ${OUTPUT_FOLDER}/${test_name} \
+    ${start_time} ${end_time} \
+    ${STATS_CONF}
 
 # write test configuration
 echo -e "Start: ${start_time}\nEnd: ${end_time}\nLocust: ${LOCUST_OPTIONS}\n" >> "${OUTPUT_FOLDER}/${test_name}.config"
