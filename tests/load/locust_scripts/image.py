@@ -121,9 +121,17 @@ class Image():
         tile_id = os.path.join(str(zoom_level), str(row), str(col))
         if tile_id not in self._tile_loaded or force_reload:
 
-            request_path = os.path.join(self._server, "ome_seadragon", "deepzoom", "get",
+            #####
+            # request_path = os.path.join(self._server, "ome_seadragon", "deepzoom", "get",
+            #                             str(self._image_id) + "_files", str(zoom_level),
+            #                             str(row) + "_" + str(col) + ".jpeg")
+
+            # OmeroGateWay
+            request_path = os.path.join(self._server, "api", "deepzoom",
                                         str(self._image_id) + "_files", str(zoom_level),
                                         str(row) + "_" + str(col) + ".jpeg")
+            #####
+
             self._logger.debug("Request path: %s", request_path)
             start_time = time.time()
             with self._stats.timer("moodle.image.loadTile"):
@@ -142,7 +150,10 @@ class Image():
     @staticmethod
     def get_dzi_image_info(browser, server, image_id, stats, timer_registry, timer_name="DZI Retrieve"):
         info = {}
-        request = os.path.join(server, "ome_seadragon", "deepzoom", "get", str(image_id) + ".dzi")
+        # OmeSeadragon
+        # request = os.path.join(server, "ome_seadragon", "deepzoom", "get", str(image_id) + ".dzi")
+        # Omero Gateway
+        request = os.path.join(server, "api", "image_mpp", str(image_id))
         start_time = time.time()
         with stats.timer("moodle.image.loadDZI"):
             response = browser.get(request, name="/get/dzi=[id]")
