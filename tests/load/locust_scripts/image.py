@@ -153,7 +153,7 @@ class Image():
         # OmeSeadragon
         # request = os.path.join(server, "ome_seadragon", "deepzoom", "get", str(image_id) + ".dzi")
         # Omero Gateway
-        request = os.path.join(server, "api", "image_mpp", str(image_id))
+        request = os.path.join(server, "api", "deepzoom", str(image_id))
         start_time = time.time()
         with stats.timer("moodle.image.loadDZI"):
             response = browser.get(request, name="/get/dzi=[id]")
