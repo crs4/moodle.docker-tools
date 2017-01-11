@@ -29,6 +29,7 @@ class Login(BaseTaskSet):
 
     def on_start(self):
         self._logger.debug("Starting %s", __name__)
+        self.client.verify = False
 
     @property
     def users(self):
@@ -96,6 +97,7 @@ class MyTaskSet(BaseTaskSet):
     def on_start(self):
         self._login_task = Login(self)
         self._logger.debug("Starting %s", __name__)
+        self.client.verify = False
 
     @property
     def questions(self):
