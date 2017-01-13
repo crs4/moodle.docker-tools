@@ -54,6 +54,7 @@ def get_configuration(filename=None):
         filename = os.environ[ENV_VAR_CONFIG_FILE]
         with open(filename) as fp:
             config.update(yaml.load(fp))
+    logging.getLogger("Configuration").debug("%s", config)
     return config
 
 
