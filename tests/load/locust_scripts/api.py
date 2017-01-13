@@ -73,7 +73,8 @@ class ImageServerAPI:
 
     @staticmethod
     def new_instance(image_server_url, http_client=None):
-        instance = configuration["image_server"]["api"](image_server_url, http_client)
+        module = __import__("api")
+        instance = getattr(module, configuration["image_server"]["api"])(image_server_url, http_client)
         if configuration["oauth"]["enabled"]:
             instance.enable_oauth(True)
             instance.set_oauth_credentials(configuration["oauth"]["client_id"],
