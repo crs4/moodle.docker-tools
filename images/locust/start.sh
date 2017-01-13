@@ -146,13 +146,13 @@ if [[ ${NO_VOLUME} == "false" ]]; then
     VOLUME_OPTS="-v ${VOLUME_NAME}:/var/lib/influxdb"
 fi
 
-ENV_CONFIG_FILE=""
-if [[ -n ${CONFIG_FILE} ]]; then
-    filename=$(basename ${CONFIG_FILE})
-    ENV_CONFIG_FILE="-e CYTEST_CONFIGURATION_FILE=\"/config/${filename}\""
-    CONFIG_LOCAL_PATH="$( cd "$( dirname ${CONFIG_FILE} )" && pwd )"
-    VOLUME_OPTS="-v ${CONFIG_LOCAL_PATH}:/config ${VOLUME_OPTS}"
-fi
+#ENV_CONFIG_FILE=""
+#if [[ -n ${CONFIG_FILE} ]]; then
+#    filename=$(basename ${CONFIG_FILE})
+#    ENV_CONFIG_FILE="-e CYTEST_CONFIGURATION_FILE=\"/config/${filename}\""
+#    CONFIG_LOCAL_PATH="$( cd "$( dirname ${CONFIG_FILE} )" && pwd )"
+#    VOLUME_OPTS="-v ${CONFIG_LOCAL_PATH}:/config ${VOLUME_OPTS}"
+#fi
 
 if [[ -n ${STATS_CONF} ]]; then
     STATS_CONF_PATH="$( cd "$( dirname ${STATS_CONF} )" && pwd )"
