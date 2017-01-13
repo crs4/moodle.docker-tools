@@ -1,4 +1,5 @@
 import os
+import api
 import time
 import copy
 import threading
@@ -18,11 +19,12 @@ class Image():
         self._image_id = image_id
         self._timer_registry = timer_registry
         self._timer_name = timer_name
-        self._server = image_server
+        self._image_server_url = image_server
         self._logger = logging.getLogger("Image-" + image_id)
         self._stats = StatsClient(configuration["statsd"]["server_address"], configuration["statsd"]["server_port"])
+        self._image_server = api.ImageServerAPI.new_instance(image_server, browser)
         # init image info
-        self._info = Image.get_dzi_image_info(browser, image_server, self._image_id, self._stats, timer_registry,
+        self._info = Image.get_dzi_image_info(self._image_server, self._image_id, self._stats, timer_registry,
                                               timer_name)
         self._info["max_zoom_level"] = self.get_max_zoom_level(self._info)
         self._tile_loaded = []
@@ -122,18 +124,19 @@ class Image():
             #                             str(row) + "_" + str(col) + ".jpeg")
 
             # OmeroGateWay
-            request_path = os.path.join(self._server, "api", "deepzoom",
-                                        str(self._image_id) + "_files", str(zoom_level),
-                                        str(row) + "_" + str(col) + ".jpeg")
+            # request_path = os.path.join(self._image_server_url, "api", "deepzoom",
+            #                             str(self._image_id) + "_files", str(zoom_level),
+            #                             str(row) + "_" + str(col) + ".jpeg")
             #####
 
-            self._logger.debug("Request path: %s", request_path)
             start_time = time.time()
             with self._stats.timer("moodle.image.loadTile"):
-                resp = self._browser.get(request_path, name="/get/tile?id=[id]")
+                # resp = self._browser.get(request_path)
+                resp = self._image_server.get_tile(self._image_id, zoom_level, row, col)
             latency = time.time() - start_time
             if self._timer_registry:
-                self._timer_registry.add_timer(timer_name, start_time, latency, request_path, resp.status_code)
+                # self._timer_registry.add_timer(timer_name, start_time, latency, request_path, resp.status_code)
+                self._timer_registry.add_timer(timer_name, start_time, latency, resp.request.url, resp.status_code)
             assert (resp.status_code == 200), 'Bad HTTP Response: ' + str(resp.status_code)
             self._tile_loaded.append(tile_id)
         else:
@@ -143,19 +146,21 @@ class Image():
         return "Image " + str(self._image_id)
 
     @staticmethod
-    def get_dzi_image_info(browser, server, image_id, stats, timer_registry, timer_name="DZI Retrieve"):
+    def get_dzi_image_info(image_server, image_id, stats, timer_registry, timer_name="DZI Retrieve"):
         info = {}
         # OmeSeadragon
         # request = os.path.join(server, "ome_seadragon", "deepzoom", "get", str(image_id) + ".dzi")
         # Omero Gateway
-        request = os.path.join(server, "api", "deepzoom", str(image_id))
+        # request = os.path.join(server, "api", "deepzoom", str(image_id))
         start_time = time.time()
         with stats.timer("moodle.image.loadDZI"):
-            response = browser.get(request, name="/get/dzi=[id]")
+            # response = browser.get(request, name="/get/dzi=[id]")
+            response = image_server.get_dzi(image_id)
         latency = time.time() - start_time
         if timer_registry:
-            timer_registry.add_timer(timer_name, start_time, latency, request, response.status_code)
-        assert (response.status_code == 200), 'Bad HTTP Response: ' + str(response.status_code) + ", " + request
+            timer_registry.add_timer(timer_name, start_time, latency, response.request.url, response.status_code)
+        assert (response.status_code == 200), \
+            'Bad HTTP Response: ' + str(response.status_code) + ", " + response.request.url
         # parse the response
         root = ET.fromstring(response.content)
         children = root.getchildren()
