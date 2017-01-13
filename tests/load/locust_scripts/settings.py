@@ -27,12 +27,12 @@ DEFAULT_CONFIG = {
         "server_port": "8125"
     },
     "oauth": {
-        "enabled": "True",
+        "enabled": "False",
         "client_id": "",
         "client_secret": ""
     },
     "image_server": {
-        "api": "OmeSeadragonGateway"
+        "api": "OmeSeadragon"
     }
 }
 
