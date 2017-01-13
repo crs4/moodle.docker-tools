@@ -89,9 +89,9 @@ class Login(BaseTaskSet):
                 self._stats.gauge('moodle.users.count', -1, delta=True)
 
 
-class MyTaskSet(BaseTaskSet):
+class NavigateImage(BaseTaskSet):
     def __init__(self, parent):
-        super(MyTaskSet, self).__init__(parent)
+        super(NavigateImage, self).__init__(parent)
         # preload questions
         self._questions = get_questions()
 
@@ -135,7 +135,7 @@ class MyLocust(HttpLocust):
     # reset gauges
     stats = statsd.StatsClient(configuration["statsd"]["server_address"], configuration["statsd"]["server_port"])
     stats.gauge('moodle.users.count', 0)
-    task_set = MyTaskSet
+    task_set = NavigateImage
     min_wait = 1000
     max_wait = 5000
 
