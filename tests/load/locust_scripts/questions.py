@@ -42,7 +42,7 @@ class Question():
         self._server_info = None
         self._moodle_url = None
         self._info = None
-        self._stats = StatsClient(configuration["statsd"]["server_address"], configuration["statsd"]["server_port"])
+        self._stats = StatsClient(configuration["statsd"]["server_host"], configuration["statsd"]["server_port"])
         self._logger = logging.getLogger("Question" + self.id)
 
     @property

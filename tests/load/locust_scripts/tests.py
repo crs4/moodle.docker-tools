@@ -12,7 +12,7 @@ from locust import task, events, web, HttpLocust, TaskSet, InterruptTaskSet
 class BaseTaskSet(TaskSet):
     def __init__(self, parent):
         super(BaseTaskSet, self).__init__(parent)
-        self._stats = statsd.StatsClient(configuration["statsd"]["server_address"],
+        self._stats = statsd.StatsClient(configuration["statsd"]["server_host"],
                                          configuration["statsd"]["server_port"])
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.DEBUG)
@@ -133,7 +133,7 @@ class NavigateImage(BaseTaskSet):
 
 class MyLocust(HttpLocust):
     # reset gauges
-    stats = statsd.StatsClient(configuration["statsd"]["server_address"], configuration["statsd"]["server_port"])
+    stats = statsd.StatsClient(configuration["statsd"]["server_host"], configuration["statsd"]["server_port"])
     stats.gauge('moodle.users.count', 0)
     task_set = NavigateImage
     min_wait = 1000
