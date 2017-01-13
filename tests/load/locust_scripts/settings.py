@@ -31,7 +31,7 @@ DEFAULT_CONFIG = {
         "client_id": "",
         "client_secret": ""
     },
-    "omeseadragon": {
+    "image_server": {
         "api": "OmeSeadragonGateway"
     }
 }
