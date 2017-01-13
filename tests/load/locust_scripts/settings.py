@@ -1,34 +1,55 @@
 import os
+import yaml
 import pprint
-import subprocess
-import socket
 import logging
+import subprocess
 
-# MOODLE_URL = "http://" + socket.gethostname() + "/moodle"
-# MOODLE_URL = "http://mep.crs4.it/moodle"
-# MOODLE_URL = "http://omero-test.crs4.it/moodle"
+ENV_VAR_CONFIG_FILE = "CYTEST_CONFIGURATION_FILE"
 
-# Users
-USERS_FILENAME = 'users.csv'  # default filename containing test users
-USER_PREFIX = 'testuser'  # default user prefix
-USER_COHORT = 'test_users'  # default user cohort
-
-# Questions
-QUESTION_FILENAME = "questions.csv"
-
-HTTP_CODES = [200, 300, 301, 302, 303, 304, 400, 401, 403, 404, 405, 406, 408, 500]
-
-# TIMER_TYPE = "analytic"
-# TIMER_TYPE = "average"
-
-# StatsD server settings
-STATSD_SERVER_ADDRESS = 'localhost'
-STATSD_SERVER_PORT = 8125
+# default configuration
+DEFAULT_CONFIG = {
+    "dataset": {
+        "folder": "../../"
+    },
+    "users": {
+        "filename": "users.csv",
+        "prefix": "testuser",
+        "cohort": "test_users"
+    },
+    "questions": {
+        "filename": "questions.csv"
+    },
+    "http": {
+        "codes": [200, 300, 301, 302, 303, 304, 400, 401, 403, 404, 405, 406, 408, 500]
+    },
+    "statsd": {
+        "server_host": "localhost",
+        "server_port": "8125"
+    },
+    "oauth": {
+        "enabled": "True",
+        "client_id": "",
+        "client_secret": ""
+    },
+    "omeseadragon": {
+        "api": "OmeSeadragonGateway"
+    }
+}
 
 # set the debug level
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("requests").setLevel(logging.WARNING)
+
+
+# read configuration
+def get_configuration(filename=None):
+    config = DEFAULT_CONFIG.copy()
+    if filename is None and os.environ.has_key(ENV_VAR_CONFIG_FILE):
+        filename = os.environ[ENV_VAR_CONFIG_FILE]
+        with open(filename) as fp:
+            config.update(yaml.load(fp))
+    return config
 
 
 # loads the configuration and update the environment
@@ -46,7 +67,11 @@ def read_config(config_filename):
         pprint.pprint(dict(os.environ))
 
 
+# update environment
 if not os.environ.has_key('SHARED_MOODLE_WWW_ROOT'):
     path = '../../../'
     config_filename = path + "config.sh"
     read_config(config_filename)
+
+# read configuration
+configuration = get_configuration()
