@@ -1,17 +1,12 @@
 import os
 import time
 import copy
-import settings
 import threading
 import logging
-import requests
 import math
 import xml.etree.ElementTree as ET
-
 from statsd import StatsClient
-
-
-# from ...load import settings
+from settings import configuration
 
 
 class Image():
@@ -25,7 +20,7 @@ class Image():
         self._timer_name = timer_name
         self._server = image_server
         self._logger = logging.getLogger("Image-" + image_id)
-        self._stats = StatsClient(settings.STATSD_SERVER_ADDRESS, settings.STATSD_SERVER_PORT)
+        self._stats = StatsClient(configuration["statsd"]["server_address"], configuration["statsd"]["server_port"])
         # init image info
         self._info = Image.get_dzi_image_info(browser, image_server, self._image_id, self._stats, timer_registry,
                                               timer_name)

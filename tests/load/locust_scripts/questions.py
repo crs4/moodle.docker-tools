@@ -1,16 +1,14 @@
-import copy
+import os
 import csv
+import time
+import copy
 import json
 import logging
-import os
-import time
+from image import Image
 from urlparse import urlparse
 from statsd import StatsClient
-
 from bs4 import BeautifulSoup
-
-from image import Image
-import settings
+from settings import configuration
 
 # module logger
 logger = logging.getLogger(__name__)
@@ -44,7 +42,7 @@ class Question():
         self._server_info = None
         self._moodle_url = None
         self._info = None
-        self._stats = StatsClient(settings.STATSD_SERVER_ADDRESS, settings.STATSD_SERVER_PORT)
+        self._stats = StatsClient(configuration["statsd"]["server_address"], configuration["statsd"]["server_port"])
         self._logger = logging.getLogger("Question" + self.id)
 
     @property
@@ -180,12 +178,11 @@ def load_question_info(browser, host, question_id, stats,
     return info
 
 
-def get_questions(filename=settings.QUESTION_FILENAME,
+def get_questions(filename=configuration["questions"]["filename"],
                   delimiter=',', skip_header=True, as_dict=False,
                   force_reload=False):
     if not _QUESTION_LIST or force_reload:
         result = []
-        filename = settings.QUESTION_FILENAME
         if not os.path.isfile(filename):
             base_path = os.path.dirname(__file__)
             path = (base_path + "/../../") if base_path else '../../'

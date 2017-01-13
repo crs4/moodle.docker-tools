@@ -6,6 +6,7 @@ import random
 import socket
 import string
 import settings
+from settings import configuration
 
 # module logger
 logger = logging.getLogger(__name__)
@@ -35,7 +36,7 @@ class User:
 
 def get_users(force_reload=False):
     if not _USER_LIST or force_reload:
-        filename = settings.USERS_FILENAME
+        filename = configuration["users"]["filename"]
         if not os.path.isfile(filename):
             base_path = os.path.dirname(__file__)
             path = (base_path + "/../../") if base_path else '../../'
@@ -46,7 +47,7 @@ def get_users(force_reload=False):
     return _USER_LIST
 
 
-def load_from_file(filename=settings.USERS_FILENAME, delimiter=',', as_dict=False):
+def load_from_file(filename=configuration["users"]["filename"], delimiter=',', as_dict=False):
     result = []
     with open(filename, 'rb') as csvfile:
         logger.info("Reading users from file '%s'...", filename)
@@ -81,7 +82,8 @@ def load_from_db(host, user, passwd, db):
 
 
 def generate_users(num_of_users=1,
-                   user_prefix=settings.USER_PREFIX, user_cohort=settings.USER_COHORT, as_dict=False):
+                   user_prefix=configuration["users"]["prefix"],
+                   user_cohort=configuration["users"]["cohort"], as_dict=False):
     result = []
     if type(num_of_users) != int:
         raise ValueError("'num_of_users' must be an integer")
@@ -108,7 +110,7 @@ def generate_users(num_of_users=1,
     return result
 
 
-def write_users(users, filename=settings.USERS_FILENAME):
+def write_users(users, filename=configuration["users"]["filename"]):
     with open(filename, 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=USER_PROPERTIES)
         writer.writeheader()

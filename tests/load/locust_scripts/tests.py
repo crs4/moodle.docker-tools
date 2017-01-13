@@ -1,18 +1,19 @@
 import re
 import time
 import users
-from questions import get_questions, QUESTION_IMAGE_NAVIGATION_LOAD
-import random
-import settings
-import logging
 import statsd
+import random
+import logging
+from settings import configuration
+from questions import get_questions, QUESTION_IMAGE_NAVIGATION_LOAD
 from locust import task, events, web, HttpLocust, TaskSet, InterruptTaskSet
 
 
 class BaseTaskSet(TaskSet):
     def __init__(self, parent):
         super(BaseTaskSet, self).__init__(parent)
-        self._stats = statsd.StatsClient(settings.STATSD_SERVER_ADDRESS, settings.STATSD_SERVER_PORT)
+        self._stats = statsd.StatsClient(configuration["statsd"]["server_address"],
+                                         configuration["statsd"]["server_port"])
         self._logger = logging.getLogger(self.__class__.__name__)
         self._logger.setLevel(logging.DEBUG)
 
@@ -118,7 +119,7 @@ class MyTaskSet(BaseTaskSet):
 
         # select a question
         question = random.choice(self.questions)
-        #question = self.questions.pop()
+        # question = self.questions.pop()
         self._logger.debug("Selected question: %r", question)
         question.load(browser=self.client, host=self.host)
         self._logger.debug("Loaded question %r", question)
@@ -132,7 +133,7 @@ class MyTaskSet(BaseTaskSet):
 
 class MyLocust(HttpLocust):
     # reset gauges
-    stats = statsd.StatsClient(settings.STATSD_SERVER_ADDRESS, settings.STATSD_SERVER_PORT)
+    stats = statsd.StatsClient(configuration["statsd"]["server_address"], configuration["statsd"]["server_port"])
     stats.gauge('moodle.users.count', 0)
     task_set = MyTaskSet
     min_wait = 1000
