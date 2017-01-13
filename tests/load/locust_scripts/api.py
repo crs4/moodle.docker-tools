@@ -104,7 +104,7 @@ class OmeSeadragonGateway(ImageServerAPI):
 
     def get_tile(self, image_id, zoom_level, row, col):
         url = path.join(self._image_server_url, "api", "deepzoom",
-                        str(self._image_id) + "_files", str(zoom_level),
+                        str(image_id) + "_files", str(zoom_level),
                         str(row) + "_" + str(col) + ".jpeg")
         print url
         return self.request(url, name="/get/tile?id=[id]")
