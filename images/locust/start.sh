@@ -56,6 +56,15 @@ while [ -n "$1" ]; do
                                 shift
                                 ;;
                         # dataset folder
+                        --config )
+                                CONFIG_FILE="$2"
+                                shift
+                                ;;
+                        --config=* )
+                                CONFIG_FILE="${OPT#*=}"
+                                shift
+                                ;;
+                        # dataset folder
                         --dataset )
                                 DATASET="$2"
                                 shift
@@ -137,6 +146,14 @@ if [[ ${NO_VOLUME} == "false" ]]; then
     VOLUME_OPTS="-v ${VOLUME_NAME}:/var/lib/influxdb"
 fi
 
+ENV_CONFIG_FILE=""
+if [[ -n ${CONFIG_FILE} ]]; then
+    filename=$(basename ${CONFIG_FILE})
+    ENV_CONFIG_FILE="-e CYTEST_CONFIGURATION_FILE=/config/${filename}"
+    CONFIG_LOCAL_PATH="$( cd "$( dirname ${CONFIG_FILE} )" && pwd )"
+    VOLUME_OPTS="-v ${CONFIG_LOCAL_PATH}:/config ${VOLUME_OPTS}"
+fi
+
 if [[ -n ${STATS_CONF} ]]; then
     STATS_CONF_PATH="$( cd "$( dirname ${STATS_CONF} )" && pwd )"
     VOLUME_OPTS="-v ${STATS_CONF_PATH}:/stats ${VOLUME_OPTS}"
@@ -174,9 +191,10 @@ echo -e " - Setup script path: ${SETUP_SCRIPT_FOLDER}"
 echo -e " - Dataset: ${DATASET}"
 echo -e " - Dataset path: ${DATASET_FOLDER}"
 echo -e " - Output path: ${OUTPUT_FOLDER}"
+echo -e " - Default config file: ${CONFIG_FILE}"
 echo -e "\n"
 
-docker run ${MODE} ${VOLUME_OPTS} \
+docker run ${MODE} ${VOLUME_OPTS} ${ENV_CONFIG_FILE} \
     -v ${DATASET_FOLDER}:"/dataset" \
     -v ${SETUP_SCRIPT_FOLDER}:"/scripts" \
     -v ${OUTPUT_FOLDER}:"/results" \
