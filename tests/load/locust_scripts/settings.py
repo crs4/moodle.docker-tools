@@ -3,6 +3,11 @@ import yaml
 import pprint
 import logging
 import subprocess
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+# disable insecure requests warnings
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 ENV_VAR_CONFIG_FILE = "CYTEST_CONFIGURATION_FILE"
 
