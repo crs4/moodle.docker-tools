@@ -194,7 +194,7 @@ echo -e " - Output path: ${OUTPUT_FOLDER}"
 echo -e " - Default config file: ${CONFIG_FILE}"
 echo -e "\n"
 
-docker run ${MODE} ${VOLUME_OPTS} ${ENV_CONFIG_FILE} \
+docker run ${MODE} ${VOLUME_OPTS} \
     -v ${DATASET_FOLDER}:"/dataset" \
     -v ${SETUP_SCRIPT_FOLDER}:"/scripts" \
     -v ${OUTPUT_FOLDER}:"/results" \
