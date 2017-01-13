@@ -37,10 +37,10 @@ function collect_stats(){
     if [[ -z ${config} ]]; then
         echo -e "\nWARNING: no config file to collect stats!\n"
     elif [[ -f ${config} ]]; then
-        while IFS='' read -r line || [[ -n "$line" ]]; do
+        while IFS='\n' read -r line || [[ -n "$line" ]]; do
             echo -e "\nList of fields: $line"
-            if [[ $line != "#*" ]]; then
-                info=($line)
+            if [[ ${line} != "#*" ]]; then
+                info=(${line})
                 for info in "${info[@]}"
                 do
                     collect_stat ${influxdb_server_url} ${output_file_prefix} ${info} ${start_time} ${end_time}
