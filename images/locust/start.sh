@@ -14,7 +14,7 @@ DATASET="../../tests/datasets/dev"
 MODE="--rm"
 
 # default docker container name
-DOCKER_CONTAINER_HOSTNAME="locust"
+DOCKER_CONTAINER_HOSTNAME="$(hostname)"
 
 # default volume
 NO_VOLUME="false"
