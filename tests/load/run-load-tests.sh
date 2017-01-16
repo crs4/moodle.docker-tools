@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# current dir
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # import stats_utils
 source ../../images/locust/stats_utils.sh
 
@@ -7,11 +10,16 @@ source ../../images/locust/stats_utils.sh
 DOCKER_SCRIPT=../../images/locust/start.sh
 SETUP_SCRIPT="load-test-setup.sh"
 
+# locust script settings
+CONFIG_FILE="config.yml"
+
 # web server
-WEB_SERVER="http://cytest.crs4.it/moodle"
+#WEB_SERVER="http://cytest.crs4.it/moodle"
+#WEB_SERVER="http://mep.crs4.it/moodle"
+WEB_SERVER="https://omero-test.crs4.it:4443/moodle"
 
 # Question DATASET
-DATASET="../../tests/datasets/prod"
+DATASET="../../tests/datasets/dev"
 
 # set execution time
 EXECUTION_TIME=$((10 * 60))
@@ -33,8 +41,9 @@ do
 
     echo -e "\nRunning with ${users} users..."
     ${DOCKER_SCRIPT} -s ${SETUP_SCRIPT} \
-                     -w ${WEB_SERVER} \
                      --dataset ${DATASET} \
+                     --config ${CONFIG_FILE} \
+                     -w ${WEB_SERVER} \
                      -o "${OUTPUT_FOLDER}/${users}" \
                      --stats-conf moodle-stats.conf \
                      --timeout ${EXECUTION_TIME} \
@@ -42,6 +51,9 @@ do
 
     # end time
     end_time=$(date +'%Y-%m-%d@%H:%M:%S')
+
+    echo "START time: ${start_time}"
+    echo "  END time: ${end_time}"
 
     # moodle stats
     collect_stats "http://cytest.crs4.it:8086" ${OUTPUT_FOLDER}/${users}/moodle \
