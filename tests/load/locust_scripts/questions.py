@@ -150,6 +150,7 @@ class Question():
             for level in range(image.MIN_ZOOM_LEVEL, int(image.max_zoom_level) + 1):
                 zoom_levels.append(level)
                 self._logger.debug("Level: %r", level)
+        self._logger.debug("ZOOM LEVELs %r", zoom_levels)
         start_time = time.time()
         for level in zoom_levels:
             image.load_tiles(level, frame_width, frame_height, frame_height,
@@ -159,7 +160,7 @@ class Question():
         if self._timer_registry:
             self._timer_registry.add_timer("NavigationImage", start_time, latency)
         self._logger.debug("NavigationImage latency: %r", latency)
-        self._logger.debug("ZOOM LEVELs: %s", zoom_levels)
+        self._logger.debug("ZOOM LEVELs: %r", zoom_levels)
 
 
 def load_question_info(browser, host, question_id, stats,
