@@ -72,9 +72,10 @@ class Question():
 
     @property
     def zoom_level(self):
-        if self._info.get("image_properties"):
-            print "ZOOM LEVEL: %r" % self._info.get("image_properties").get("zoom_level")
-        return self._info.get("image_properties").get("zoom_level") if self._info.get("image_properties") else 0.0
+        zoom_level = self._info.get("image_properties").get("zoom_level") \
+            if self._info.get("image_properties") else 0.0
+        self._logger.debug("Current ZOOM level: %r", zoom_level)
+        return zoom_level
 
     @property
     def width(self):
