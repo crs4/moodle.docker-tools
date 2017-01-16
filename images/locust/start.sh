@@ -110,11 +110,11 @@ while [ -n "$1" ]; do
                                 shift
                                 ;;
                         # volume name
-                        -v | --volume )
+                        --volume )
                                 VOLUME_NAME="$2"
                                 shift
                                 ;;
-                        -v=* | --volume=* )
+                        --volume=* )
                                 VOLUME_NAME="${OPT#*=}"
                                 shift
                                 ;;
