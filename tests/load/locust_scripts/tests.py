@@ -125,8 +125,13 @@ class NavigateImage(BaseTaskSet):
         self._logger.debug("Loaded question %r", question)
         self._logger.debug("Loaded question info %r", question._info)
 
-        question.navigate_image(QUESTION_IMAGE_NAVIGATION_LOAD.HIGH,
-                                multithread=False, think_time_per_level=0)
+        self._logger.debug("Starting Image Navigation: mode=%s, multithreading=%s, think_time=%s",
+                           configuration["questions"]["navigation"],
+                           configuration["questions"]["multithreading"],
+                           configuration["questions"]["think_time_per_level"])
+        question.navigate_image(configuration["questions"]["navigation"],
+                                configuration["questions"]["multithreading"],
+                                configuration["questions"]["think_time_per_level"])
         # perform logout
         self._login_task.logout(user)
 
