@@ -149,7 +149,7 @@ fi
 ENV_CONFIG_FILE=""
 if [[ -n ${CONFIG_FILE} ]]; then
     filename=$(basename ${CONFIG_FILE})
-    ENV_CONFIG_FILE="-e CYTEST_CONFIGURATION_FILE=\"/config/${filename}\""
+    ENV_CONFIG_FILE="-e CYTEST_CONFIGURATION_FILE=/config/${filename}"
     CONFIG_LOCAL_PATH="$( cd "$( dirname ${CONFIG_FILE} )" && pwd )"
     VOLUME_OPTS="-v ${CONFIG_LOCAL_PATH}:/config ${VOLUME_OPTS}"
 fi
@@ -192,6 +192,7 @@ echo -e " - Dataset: ${DATASET}"
 echo -e " - Dataset path: ${DATASET_FOLDER}"
 echo -e " - Output path: ${OUTPUT_FOLDER}"
 echo -e " - Default config file: ${CONFIG_FILE}"
+echo -e " - Config: ${ENV_CONFIG_FILE}"
 echo -e "\n"
 
 docker run ${MODE} ${VOLUME_OPTS} ${ENV_CONFIG_FILE} \
