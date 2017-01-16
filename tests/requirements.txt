@@ -5,3 +5,4 @@ aenum>=1.4.5
 #MySQL-python>=1.2.5
 #Matplotlib>=1.5.2
 statsd>=3.2.1
+PyYAML>=3.12.0
