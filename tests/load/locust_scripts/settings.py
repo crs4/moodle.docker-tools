@@ -22,7 +22,10 @@ DEFAULT_CONFIG = {
         "cohort": "test_users"
     },
     "questions": {
-        "filename": "questions.csv"
+        "filename": "questions.csv",
+        "navigation": "low",
+        "think_time_per_tile": 0,
+        "multithreading": False
     },
     "http": {
         "codes": [200, 300, 301, 302, 303, 304, 400, 401, 403, 404, 405, 406, 408, 500]
