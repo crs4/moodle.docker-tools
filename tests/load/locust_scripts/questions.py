@@ -126,6 +126,10 @@ class Question():
                        think_time_per_level=ZOOM_LEVEL_THINK_TIME, force_reload=False):
         zoom_levels = []
         image = self.image
+
+        if isinstance(load, (str, unicode)):
+            load = QUESTION_IMAGE_NAVIGATION_LOAD.parse(load)
+
         max_zoom_level = int(image.max_zoom_level) + 1
         current_zoom_level = int(round(self.zoom_level))
         if current_zoom_level < image.MIN_ZOOM_LEVEL:
