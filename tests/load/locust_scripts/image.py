@@ -104,6 +104,7 @@ class Image():
                 t.join()
         else:
             start_time = time.time()
+            self._logger.debug("Loading TILES of LEVEL: %r", zoom_level)
             for tile_info in tiles_info:
                 zoom_level, row, col = tile_info
                 self._logger.debug("Loading tile %r", tile_info)
