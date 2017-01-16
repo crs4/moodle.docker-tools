@@ -22,6 +22,17 @@ class QUESTION_IMAGE_NAVIGATION_LOAD():
     MEDIUM = 1
     HIGH = 2
 
+    @staticmethod
+    def parse(load):
+        value = load.upper()
+        if value == "LOW":
+            return QUESTION_IMAGE_NAVIGATION_LOAD.LOW
+        elif value == "MEDIUM":
+            return QUESTION_IMAGE_NAVIGATION_LOAD.MEDIUM
+        elif value == "HIGH":
+            return QUESTION_IMAGE_NAVIGATION_LOAD.HIGH
+        raise ValueError("Unvalid value!!!")
+
 
 def _get_server_url(browser, moodle_relative_path="moodle"):
     browser_url = urlparse(browser.host)
