@@ -10,6 +10,7 @@ from settings import configuration
 
 # module logger
 logger = logging.getLogger(__name__)
+logger.setLevel(configuration["log"]["level"])
 
 # preloaded list of users
 _USER_LIST = None

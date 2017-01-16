@@ -13,6 +13,9 @@ ENV_VAR_CONFIG_FILE = "CYTEST_CONFIGURATION_FILE"
 
 # default configuration
 DEFAULT_CONFIG = {
+    "log_level": {
+        "level": "INFO"
+    },
     "dataset": {
         "folder": "../../"
     },

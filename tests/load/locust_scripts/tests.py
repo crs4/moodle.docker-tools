@@ -15,7 +15,7 @@ class BaseTaskSet(TaskSet):
         self._stats = statsd.StatsClient(configuration["statsd"]["server_host"],
                                          configuration["statsd"]["server_port"])
         self._logger = logging.getLogger(self.__class__.__name__)
-        self._logger.setLevel(logging.DEBUG)
+        self._logger.setLevel(configuration["log"]["level"])
 
         # setting the hostname
         if isinstance(parent, HttpLocust) or hasattr(parent, "host"):

@@ -19,6 +19,7 @@ class ImageServerAPI:
         if http_client is None:
             self._http_client = requests
         self._logger = logging.getLogger(self.__class__.__name__)
+        self._logger.setLevel(configuration["log"]["level"])
 
     @property
     def image_server_url(self):

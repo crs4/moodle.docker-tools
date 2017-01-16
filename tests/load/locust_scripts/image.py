@@ -21,6 +21,7 @@ class Image():
         self._timer_name = timer_name
         self._image_server_url = image_server
         self._logger = logging.getLogger("Image-" + image_id)
+        self._logger.setLevel(configuration["log"]["level"])
         self._stats = StatsClient(configuration["statsd"]["server_host"], configuration["statsd"]["server_port"])
         self._image_server = api.ImageServerAPI.new_instance(image_server, browser)
         # init image info
@@ -198,6 +199,7 @@ class ImageTileLoaderThread(threading.Thread):
         self._force_reload = force_reload
         self._timer_name = timer_name
         self._logger = logging.getLogger("TilesLoaderThread-" + self.getName())
+        self._logger.setLevel(configuration["log"]["level"])
 
     @property
     def tiles(self):

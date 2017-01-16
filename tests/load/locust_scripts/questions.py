@@ -55,6 +55,7 @@ class Question():
         self._info = None
         self._stats = StatsClient(configuration["statsd"]["server_host"], configuration["statsd"]["server_port"])
         self._logger = logging.getLogger("Question" + self.id)
+        self._logger.setLevel(configuration["log"]["level"])
 
     @property
     def question_id(self):
