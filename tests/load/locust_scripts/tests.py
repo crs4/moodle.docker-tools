@@ -117,21 +117,25 @@ class NavigateImage(BaseTaskSet):
         w = random.randint(0, 10)
         time.sleep(w)
 
-        # select a question
-        question = random.choice(self.questions)
-        # question = self.questions.pop()
-        self._logger.debug("Selected question: %r", question)
-        question.load(browser=self.client, host=self.host)
-        self._logger.debug("Loaded question %r", question)
-        self._logger.debug("Loaded question info %r", question._info)
+        try:
+            # select a question
+            question = random.choice(self.questions)
+            # question = self.questions.pop()
+            self._logger.debug("Selected question: %r", question)
+            question.load(browser=self.client, host=self.host)
+            self._logger.debug("Loaded question %r", question)
+            self._logger.debug("Loaded question info %r", question._info)
 
-        self._logger.debug("Starting Image Navigation: mode=%s, multithreading=%s, think_time=%s",
-                           configuration["questions"]["navigation"],
-                           configuration["questions"]["multithreading"],
-                           configuration["questions"]["think_time_per_level"])
-        question.navigate_image(configuration["questions"]["navigation"],
-                                configuration["questions"]["multithreading"],
-                                configuration["questions"]["think_time_per_level"])
+            self._logger.debug("Starting Image Navigation: mode=%s, multithreading=%s, think_time=%s",
+                               configuration["questions"]["navigation"],
+                               configuration["questions"]["multithreading"],
+                               configuration["questions"]["think_time_per_level"])
+            question.navigate_image(configuration["questions"]["navigation"],
+                                    configuration["questions"]["multithreading"],
+                                    configuration["questions"]["think_time_per_level"])
+        except:
+            self._logger.error("Error when question %r", question)
+
         # perform logout
         self._login_task.logout(user)
 
