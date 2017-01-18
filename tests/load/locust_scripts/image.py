@@ -2,12 +2,14 @@ import os
 import api
 import time
 import copy
-import threading
-import logging
 import math
+import gevent
+import logging
+from uuid import uuid1
 import xml.etree.ElementTree as ET
 from statsd import StatsClient
 from settings import configuration
+from gevent import Greenlet
 
 
 class Image():
@@ -91,7 +93,7 @@ class Image():
         self._logger.debug("Tiles to LOAD %r", tiles_info)
         if multithreading:
             counter = 0
-            image_loader_pool = [ImageTileLoaderThread(self, force_reload=force_reload)
+            image_loader_pool = [ImageTileLoaderThread("Thread-" + str(i), self, force_reload=force_reload)
                                  for i in range(0, thread_pool_size + 1)]
             for tile in tiles_info:
                 thread_number = counter % len(image_loader_pool)
@@ -191,15 +193,19 @@ class Image():
         return math.pow(0.5, max_level - level)
 
 
-class ImageTileLoaderThread(threading.Thread):
-    def __init__(self, image, timer_name="ImageTile", force_reload=False):
-        threading.Thread.__init__(self)
+class ImageTileLoaderThread(Greenlet):
+    def __init__(self, name, image, timer_name="ImageTile", force_reload=False, *args, **kwargs):
+        super(ImageTileLoaderThread, self).__init__(self.process_tiles, *args, **kwargs)
         self._tiles = []
         self._image = image
         self._force_reload = force_reload
         self._timer_name = timer_name
+        self._name = "Thread-" + str(uuid1()) if name is None else name
         self._logger = logging.getLogger("TilesLoaderThread-" + self.getName())
         self._logger.setLevel(configuration["log"]["level"])
+
+    def getName(self):
+        return self._name
 
     @property
     def tiles(self):
@@ -225,7 +231,7 @@ class ImageTileLoaderThread(threading.Thread):
     def stop(self):
         self._stop.set()
 
-    def run(self):
+    def process_tiles(self):
         self._logger.debug("Thread %s start !!!", self.getName())
         for tile_info in self._tiles:
             zoom_level, row, col = tile_info
