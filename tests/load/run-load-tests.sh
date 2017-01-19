@@ -35,7 +35,7 @@ USERS=($(seq 10 10 300))
 HATCH_RATE=0.16666667
 
 # output folder
-OUTPUT_FOLDER="results"
+OUTPUT_FOLDER="results/"$(date +'%Y%m%d%H%M%S')
 
 # set sleep time
 SLEEP_TIME=$((2 * 60))
