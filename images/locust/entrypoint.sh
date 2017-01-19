@@ -224,7 +224,8 @@ else
 fi
 
 # stop locust
-curl "http://localhost:8089/stop"
+curl -m 10 "http://localhost:8089/stop"
+
 
 # end time
 end_time=$(date +'%Y-%m-%d@%H:%M:%S')
