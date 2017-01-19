@@ -27,6 +27,9 @@ EXECUTION_TIME=$((10 * 60))
 # set list of number of users
 USERS=($(seq 10 10 300))
 
+# HATCH_RATE
+HATCH_RATE=0.16666667
+
 # output folder
 OUTPUT_FOLDER="results"
 
@@ -47,7 +50,7 @@ do
                      -o "${OUTPUT_FOLDER}/${users}" \
                      --stats-conf moodle-stats.conf \
                      --timeout ${EXECUTION_TIME} \
-                     -c ${users} -r ${users} --no-web
+                     -c ${users} -r ${HATCH_RATE} --no-web
 
     # end time
     end_time=$(date +'%Y-%m-%d@%H:%M:%S')
