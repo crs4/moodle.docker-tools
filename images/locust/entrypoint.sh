@@ -226,9 +226,12 @@ fi
 # stop locust
 curl -m 10 "http://localhost:8089/stop"
 
-
 # end time
 end_time=$(date +'%Y-%m-%d@%H:%M:%S')
+
+# reset users counter
+echo "moodle.users.count:0|g" | nc -w 1 -u ${TELEGRAF_HOSTNAME} 8125
+sleep 15
 
 # collect locust stats
 collect_locust_stats "http://localhost:8089" ${OUTPUT_FOLDER}/${test_name}
