@@ -13,10 +13,14 @@ SETUP_SCRIPT="load-test-setup.sh"
 # locust script settings
 CONFIG_FILE="config.yml"
 
+# servers
+WEB_SERVER_HOSTNAME="omero-test.crs4.it"
+IMAGE_SERVER_HOSTNAME="omero-test.crs4.it"
+
 # web server
 #WEB_SERVER="http://cytest.crs4.it/moodle"
 #WEB_SERVER="http://mep.crs4.it/moodle"
-WEB_SERVER="https://omero-test.crs4.it:4443/moodle"
+MOODLE_URL="https://${WEB_SERVER_HOSTNAME}:4443/moodle"
 
 # Question DATASET
 DATASET="../../tests/datasets/dev"
@@ -46,7 +50,7 @@ do
     ${DOCKER_SCRIPT} -s ${SETUP_SCRIPT} \
                      --dataset ${DATASET} \
                      --config ${CONFIG_FILE} \
-                     -w ${WEB_SERVER} \
+                     -w ${MOODLE_URL} \
                      -o "${OUTPUT_FOLDER}/${users}" \
                      --stats-conf moodle-stats.conf \
                      --timeout ${EXECUTION_TIME} \
@@ -59,11 +63,11 @@ do
     echo "  END time: ${end_time}"
 
     # moodle stats
-    collect_stats "http://cytest.crs4.it:8086" ${OUTPUT_FOLDER}/${users}/moodle \
+    collect_stats "http://${WEB_SERVER_HOSTNAME}:8086" ${OUTPUT_FOLDER}/${users}/moodle \
             ${start_time} ${end_time} host-stats.conf
     # omero stats
-    collect_stats "http://ome-cytest.crs4.it:8086" ${OUTPUT_FOLDER}/${users}/omero \
-            ${start_time} ${end_time} host-stats.conf
+#    collect_stats "http://${IMAGE_SERVER_HOSTNAME}:8086" ${OUTPUT_FOLDER}/${users}/omero \
+#            ${start_time} ${end_time} host-stats.conf
 
     # wait for next test
     if [[ ${users} != ${USERS[*]: -1} ]]; then
