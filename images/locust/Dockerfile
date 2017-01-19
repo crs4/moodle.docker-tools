@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install required packages
 RUN apt-get update \
-    && apt-get -y install git apt-utils nano curl apt-transport-https iputils-ping supervisor sysstat net-tools \
+    && apt-get -y install git apt-utils nano curl apt-transport-https iputils-ping supervisor sysstat net-tools netcat \
         python python-pip python-dev ipython ipython-notebook \
     && curl -sL https://repos.influxdata.com/influxdb.key | apt-key add - \
     && echo "deb https://repos.influxdata.com/ubuntu xenial stable" | tee /etc/apt/sources.list.d/influxdb.list \
