@@ -13,7 +13,7 @@ ENV_VAR_CONFIG_FILE = "CYTEST_CONFIGURATION_FILE"
 
 # default configuration
 DEFAULT_CONFIG = {
-    "log_level": {
+    "log": {
         "level": "INFO"
     },
     "dataset": {
@@ -48,7 +48,7 @@ DEFAULT_CONFIG = {
 }
 
 # set the debug level
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("requests").setLevel(logging.WARNING)
 
