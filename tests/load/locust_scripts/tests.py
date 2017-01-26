@@ -22,6 +22,12 @@ class BaseTaskSet(TaskSet):
             self._logger.debug("Locust HOST: %s", parent.host)
             self.host = parent.host
 
+    def _report_error(self, error="generic", msg="Error", response=None):
+        self._stats.gauge("errors.{0}".format(error), 1, delta=True)
+        self._stats.gauge("errors.total", 1, delta=True)
+        if response is not None:
+            response.failure(msg)
+
 
 class Login(BaseTaskSet):
     def __init__(self, parent):
