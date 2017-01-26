@@ -184,7 +184,7 @@ def on_request_success(request_type, name, response_time, response_length):
     """
     Event handler that get triggered on every successful request
     """
-    print "%s: %s -- %s, %s" % (name, request_type, response_time, response_length)
+    _logger.debug("%s: %s -- %s, %s", name, request_type, response_time, response_length)
     stats["content-length"] += response_length
 
 
@@ -208,17 +208,17 @@ def on_slave_report(client_id, data):
 
 
 def on_locust_error(locust_instance, exception, tb):
-    print "%r" % locust_instance
-    print "%r" % exception
-    print "%r" % tb
+    _logger.debug(exception)
+    # statsd_client.incr("errors.locust")
+    # statsd_client.incr("errors.total")
 
 
 def on_hatch_completed(user_count):
-    print "Hatch completed: %r" % user_count
+    _logger.info("Hatch completed: %r", user_count)
 
 
 def on_quitting():
-    print "Quitting"
+    _logger.info("Quitting")
 
 
 # Hook up the event listeners
