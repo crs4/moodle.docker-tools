@@ -163,9 +163,6 @@ class NavigateImage(BaseTaskSet):
 
 
 class MyLocust(HttpLocust):
-    # reset gauges
-    stats = statsd.StatsClient(configuration["statsd"]["server_host"], configuration["statsd"]["server_port"])
-    stats.gauge('moodle.users.count', 0)
     task_set = NavigateImage
     min_wait = 1000
     max_wait = 5000
@@ -207,6 +204,18 @@ def on_slave_report(client_id, data):
     stats["content-length"] += data["content-length"]
 
 
+def reset_gauges():
+    # reset gauges
+    _logger.info("Resetting gauges...")
+    stats = statsd.StatsClient(configuration["statsd"]["server_host"], configuration["statsd"]["server_port"])
+    stats.gauge('moodle.users.count', 0)
+    for e in ('errors.total', 'errors.index',
+              'errors.login.index', 'errors.login.submit', 'errors.logout.submit',
+              'errors.question.preview',  # 'errors.question.info',
+              'errors.image.tile', 'errors.image.dzi'):
+        stats.gauge(e, 0)
+
+
 def on_locust_error(locust_instance, exception, tb):
     _logger.debug(exception)
     # statsd_client.incr("errors.locust")
@@ -221,6 +230,16 @@ def on_quitting():
     _logger.info("Quitting")
 
 
+def on_locust_start_hatching():
+    reset_gauges()
+    _logger.info("Start hatching...")
+
+
+def on_locust_stop_hatching():
+    reset_gauges()
+    _logger.info("Start hatching...")
+
+
 # Hook up the event listeners
 events.request_success += on_request_success
 events.report_to_master += on_report_to_master
@@ -228,6 +247,8 @@ events.slave_report += on_slave_report
 events.locust_error += on_locust_error
 events.hatch_complete += on_hatch_completed
 events.quitting += on_quitting
+events.locust_start_hatching += on_locust_start_hatching
+events.locust_stop_hatching += on_locust_stop_hatching
 
 
 @web.app.route("/content-length")
