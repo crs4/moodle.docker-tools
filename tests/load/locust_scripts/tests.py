@@ -39,12 +39,20 @@ class Login(BaseTaskSet):
     @task(1)
     def index(self):
         with self._stats.timer('moodle.home'):
-            self.client.get("/")
+            response = self.client.get("/")
+            if response.status_code != 200:
+                self._report_error('errors.index', "Unable to load the home page", response)
+                return False
+        return True
 
     @task(1)
     def login_page(self):
         with self._stats.timer('moodle.login.index'):
-            self.client.get("/login/index.php")
+            response = self.client.get("/login/index.php")
+            if response.status_code != 200:
+                self._report_error('errors.login.index', "Unable to load the home page", response)
+                return False
+        return True
 
     @task(1)
     def login(self, logout=True):
@@ -56,8 +64,8 @@ class Login(BaseTaskSet):
                  'password': user.password
              }, name="/login/index.php [username] [password]", catch_response=True) as response:
             if response.status_code != 200:
-                response.failure("Got wrong response")
-                raise InterruptTaskSet("Login failed for user %s" % user.username)
+                self._report_error("login.submit", "Login failed for user %s" % user.username, response)
+                return None
             else:
                 self._logger.debug("Log in succeded: %r", user)
                 # self._stats.set('moodle.users.set', user.username)
@@ -65,7 +73,9 @@ class Login(BaseTaskSet):
                 m = re.search('sesskey=(\S+)', response.content)
                 session_key = m.group(1) if m else None
                 if not session_key:
-                    raise InterruptTaskSet("Unable to find the session key for the user %s" % user.username)
+                    self._report_error("login.submit",
+                                       "Unable to find the session key for the user %s" % user.username, response)
+                    return None
                 user.sessionkey = session_key
                 self._logger.debug("User sessionKey: %s", user.sessionkey)
         if logout:
@@ -76,17 +86,20 @@ class Login(BaseTaskSet):
 
     def logout(self, user):
         if not user or not user.sessionkey:
-            raise ValueError("Invalid session key")
-        with self._stats.timer('moodle.logut.submit'), \
-             self.client.get("/login/logout.php?sessKey=%s" % user.sessionkey,
-                             name="/logout.php?sessKey=[id]",
-                             catch_response=True) as response:
-            if response.status_code != 200:
-                response.failure("Got wrong response")
-                raise InterruptTaskSet("Logout failed for user %s (sessionKey: %s)" % (user.username, user.sessionkey))
-            else:
-                self._logger.debug("Logout succeded")
-                self._stats.gauge('moodle.users.count', -1, delta=True)
+            # self._report_error("logout", "Invalid session key")
+            raise RuntimeError("Unable to find the session key")
+        else:
+            with self._stats.timer('moodle.logut.submit'), \
+                 self.client.get("/login/logout.php?sessKey=%s" % user.sessionkey,
+                                 name="/logout.php?sessKey=[id]",
+                                 catch_response=True) as response:
+                if response.status_code != 200:
+                    self._report_error("login.submit",
+                                       "Logout failed for user %s (sessionKey: %s)" % (user.username, user.sessionkey),
+                                       response)
+                else:
+                    self._logger.debug("Logout succeded")
+                    self._stats.gauge('moodle.users.count', -1, delta=True)
 
 
 class NavigateImage(BaseTaskSet):

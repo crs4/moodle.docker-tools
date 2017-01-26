@@ -125,6 +125,10 @@ class Image():
             with self._stats.timer("moodle.image.loadTile"):
                 # resp = self._browser.get(request_path)
                 resp = self._image_server.get_tile(self._image_id, zoom_level, row, col)
+                if resp is None or resp.status_code != 200:
+                    self._stats.gauge("errors.{0}".format("image.tile"), 1, delta=True)
+                    self._stats.gauge("errors.total", 1, delta=True)
+                    raise RuntimeError("Error while loading title")
             latency = time.time() - start_time
             if self._timer_registry:
                 # self._timer_registry.add_timer(timer_name, start_time, latency, request_path, resp.status_code)
@@ -144,6 +148,10 @@ class Image():
         with stats.timer("moodle.image.loadDZI"):
             # response = browser.get(request, name="/get/dzi=[id]")
             response = image_server.get_dzi(image_id)
+            if response is None or response.status_code != 200:
+                stats.gauge("errors.{0}".format("image.dzi"), 1, delta=True)
+                stats.gauge("errors.total", 1, delta=True)
+                raise RuntimeError("Error while loading image DZI")
         latency = time.time() - start_time
         if timer_registry:
             timer_registry.add_timer(timer_name, start_time, latency, response.request.url, response.status_code)

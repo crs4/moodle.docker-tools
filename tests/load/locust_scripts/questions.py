@@ -174,6 +174,10 @@ def load_question_info(browser, host, question_id, stats,
     content = None
     with stats.timer("moodle.question.loadinfo"):
         response = browser.get(request_path, name="/question/preview.php?id=[qid]")
+        if response is None or response.status_code != 200:
+            stats.gauge("errors.{0}".format("question.preview"), 1, delta=True)
+            stats.gauge("errors.total", 1, delta=True)
+            raise RuntimeError("Error while loading question info")
         content = response.content
     latency = time.time() - start_time
     # register timers & counters
