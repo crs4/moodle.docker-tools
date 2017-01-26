@@ -179,8 +179,6 @@ def load_question_info(browser, host, question_id, stats,
     # register timers & counters
     if timer_registry:
         timer_registry.add_timer(timer_name, start_time, latency, request_path, response.code)
-    else:
-        logger.warn("No TIMER registry found !!!")
     # extract data
     viewer_config_el = None
     soup = BeautifulSoup(content, "html.parser")

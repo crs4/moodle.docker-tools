@@ -86,26 +86,22 @@ class ImageServerAPI:
 class OmeSeadragon(ImageServerAPI):
     def get_dzi(self, image_id):
         url = path.join(self.image_server_url, "ome_seadragon", "deepzoom", "get", str(image_id) + ".dzi")
-        print url
         return self.request(url, name="/get/dzi=[id]")
 
     def get_tile(self, image_id, zoom_level, row, col):
         url = path.join(self._image_server_url, "ome_seadragon", "deepzoom", "get",
                         str(image_id) + "_files", str(zoom_level),
                         str(row) + "_" + str(col) + ".jpeg")
-        print url
         return self.request(url, name="/get/tile?id=[id]")
 
 
 class OmeSeadragonGateway(ImageServerAPI):
     def get_dzi(self, image_id):
         url = path.join(self._image_server_url, "api", "deepzoom", str(image_id) + ".dzi") + "/"
-        print url
         return self.request(url, name="/get/dzi=[id]")
 
     def get_tile(self, image_id, zoom_level, row, col):
         url = path.join(self._image_server_url, "api", "deepzoom",
                         str(image_id) + "_files", str(zoom_level),
                         str(row) + "_" + str(col) + ".jpeg")
-        print url
         return self.request(url, name="/get/tile?id=[id]")
