@@ -8,6 +8,9 @@ from settings import configuration
 from questions import get_questions, QUESTION_IMAGE_NAVIGATION_LOAD
 from locust import task, events, web, HttpLocust, TaskSet, InterruptTaskSet
 
+# logger
+_logger = logging.getLogger(__name__)
+
 
 class BaseTaskSet(TaskSet):
     def __init__(self, parent):
