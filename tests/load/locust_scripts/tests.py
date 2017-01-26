@@ -128,38 +128,36 @@ class NavigateImage(BaseTaskSet):
 
     @task
     def navigate_image(self):
-        # go to home
-        self._login_task.index()
-        # go to login page
-        self._login_task.login_page()
-        # perform login
-        user = self._login_task.login(logout=False)
-        self._logger.debug("The current user %r", user)
+        # visit home and login pages
+        if self._login_task.index() and self._login_task.login_page():
+            # perform login
+            user = self._login_task.login(logout=False)
+            if user is not None:
+                self._logger.debug("The current user %r", user)
+                w = random.randint(0, 10)
+                time.sleep(w)
+                try:
+                    # select a question
+                    question = random.choice(self.questions)
+                    # question = self.questions.pop()
+                    self._logger.debug("Selected question: %r", question)
+                    question.load(browser=self.client, host=self.host)
+                    self._logger.debug("Loaded question %r", question)
+                    self._logger.debug("Loaded question info %r", question._info)
 
-        w = random.randint(0, 10)
-        time.sleep(w)
+                    self._logger.debug("Starting Image Navigation: mode=%s, multithreading=%s, think_time=%s",
+                                       configuration["questions"]["navigation"],
+                                       configuration["questions"]["multithreading"],
+                                       configuration["questions"]["think_time_per_level"])
+                    question.navigate_image(configuration["questions"]["navigation"],
+                                            configuration["questions"]["multithreading"],
+                                            configuration["questions"]["think_time_per_level"])
+                except RuntimeError:
+                    # self._report_error("question.preview", "Error on question preview %r")
+                    self._logger.error("Error on question preview %r", question)
 
-        try:
-            # select a question
-            question = random.choice(self.questions)
-            # question = self.questions.pop()
-            self._logger.debug("Selected question: %r", question)
-            question.load(browser=self.client, host=self.host)
-            self._logger.debug("Loaded question %r", question)
-            self._logger.debug("Loaded question info %r", question._info)
-
-            self._logger.debug("Starting Image Navigation: mode=%s, multithreading=%s, think_time=%s",
-                               configuration["questions"]["navigation"],
-                               configuration["questions"]["multithreading"],
-                               configuration["questions"]["think_time_per_level"])
-            question.navigate_image(configuration["questions"]["navigation"],
-                                    configuration["questions"]["multithreading"],
-                                    configuration["questions"]["think_time_per_level"])
-        except:
-            self._logger.error("Error when question %r", question)
-
-        # perform logout
-        self._login_task.logout(user)
+                # perform logout
+                self._login_task.logout(user)
 
 
 class MyLocust(HttpLocust):
