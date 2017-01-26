@@ -49,6 +49,7 @@ class Login(BaseTaskSet):
     def index(self):
         with self._stats.timer('moodle.home'):
             response = self.client.get("/")
+            self._stats.gauge('requests.total', 1, delta=True)
             if response.status_code != 200:
                 self._report_error('errors.index', "Unable to load the home page", response)
                 return False
@@ -58,6 +59,7 @@ class Login(BaseTaskSet):
     def login_page(self):
         with self._stats.timer('moodle.login.index'):
             response = self.client.get("/login/index.php")
+            self._stats.gauge('requests.total', 1, delta=True)
             if response.status_code != 200:
                 self._report_error('errors.login.index', "Unable to load the home page", response)
                 return False
@@ -72,6 +74,7 @@ class Login(BaseTaskSet):
                  'username': user.username,
                  'password': user.password
              }, name="/login/index.php [username] [password]", catch_response=True) as response:
+            self._stats.gauge('requests.total', 1, delta=True)
             if response.status_code != 200:
                 self._report_error("login.submit", "Login failed for user %s" % user.username, response)
                 return None
@@ -102,6 +105,7 @@ class Login(BaseTaskSet):
                  self.client.get("/login/logout.php?sessKey=%s" % user.sessionkey,
                                  name="/logout.php?sessKey=[id]",
                                  catch_response=True) as response:
+                self._stats.gauge('requests.total', 1, delta=True)
                 if response.status_code != 200:
                     self._report_error("login.submit",
                                        "Logout failed for user %s (sessionKey: %s)" % (user.username, user.sessionkey),
@@ -207,6 +211,7 @@ def reset_gauges():
     _logger.info("Resetting gauges...")
     stats = statsd.StatsClient(configuration["statsd"]["server_host"], configuration["statsd"]["server_port"])
     stats.gauge('moodle.users.count', 0)
+    stats.gauge('requests.total', 0)
     for e in ('errors.total', 'errors.index',
               'errors.login.index', 'errors.login.submit', 'errors.logout.submit',
               'errors.question.preview',  # 'errors.question.info',
