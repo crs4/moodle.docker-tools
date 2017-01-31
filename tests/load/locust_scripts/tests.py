@@ -138,24 +138,40 @@ class NavigateImage(BaseTaskSet):
             user = self._login_task.login(logout=False)
             if user is not None:
                 self._logger.debug("The current user %r", user)
+                self._logger.debug("Total number of questions for the user %r: %d",
+                                   user, configuration["questions"]["questions_per_user"])
                 w = random.randint(0, 10)
                 time.sleep(w)
                 try:
-                    # select a question
-                    question = random.choice(self.questions)
-                    # question = self.questions.pop()
-                    self._logger.debug("Selected question: %r", question)
-                    question.load(browser=self.client, host=self.host)
-                    self._logger.debug("Loaded question %r", question)
-                    self._logger.debug("Loaded question info %r", question._info)
 
-                    self._logger.debug("Starting Image Navigation: mode=%s, multithreading=%s, think_time=%s",
-                                       configuration["questions"]["navigation"],
-                                       configuration["questions"]["multithreading"],
-                                       configuration["questions"]["think_time_per_level"])
-                    question.navigate_image(configuration["questions"]["navigation"],
-                                            configuration["questions"]["multithreading"],
-                                            configuration["questions"]["think_time_per_level"])
+                    if configuration["questions"]["think_time_before_question"]:
+                        self._logger.debug("Waiting %r secd. before the next question",
+                                           configuration["questions"]["think_time_before_question"])
+                        time.sleep(configuration["questions"]["think_time_before_question"])
+
+                    for qi in range(0, configuration["questions"]["questions_per_user"]):
+
+                        # select a question
+                        question_index = qi
+                        if configuration["questions"]["random_choice"]:
+                            question_index = random.randint(0, len(self.questions))
+                        question = self.questions[question_index]
+                        self._logger.debug("Processing the question %r of the user %r (question index: %d)",
+                                           question, user, question_index)
+
+                        # question = self.questions.pop()
+                        self._logger.debug("Selected question: %r", question)
+                        question.load(browser=self.client, host=self.host)
+                        self._logger.debug("Loaded question %r", question)
+                        self._logger.debug("Loaded question info %r", question._info)
+
+                        self._logger.debug("Starting Image Navigation: mode=%s, multithreading=%s, think_time=%s",
+                                           configuration["questions"]["navigation"],
+                                           configuration["questions"]["multithreading"],
+                                           configuration["questions"]["think_time_per_level"])
+                        question.navigate_image(configuration["questions"]["navigation"],
+                                                configuration["questions"]["multithreading"],
+                                                think_time_per_level=configuration["questions"]["think_time_per_level"])
                 except RuntimeError:
                     # self._report_error("question.preview", "Error on question preview %r")
                     self._logger.error("Error on question preview %r", question)

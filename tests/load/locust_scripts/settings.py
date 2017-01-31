@@ -27,7 +27,10 @@ DEFAULT_CONFIG = {
     "questions": {
         "filename": "questions.csv",
         "navigation": "low",
+        "questions_per_user": 1,
         "think_time_per_tile": 0,
+        "think_time_before_question": 4,
+        "random_choice":  False,
         "multithreading": False
     },
     "http": {

@@ -156,6 +156,7 @@ class Question():
         for level in zoom_levels:
             image.load_tiles(level, frame_width, frame_height, frame_height,
                              multithreading=multithread, force_reload=force_reload)
+            self._logger.debug("Waiting %r sec before loading the next zoom level", think_time_per_level)
             time.sleep(think_time_per_level)
         latency = time.time() - start_time
         if self._timer_registry:
