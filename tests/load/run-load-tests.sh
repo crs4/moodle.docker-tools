@@ -44,7 +44,7 @@ SLEEP_TIME=$((2 * 60))
 for users in "${USERS[@]}"
 do
     # start time
-    start_time=$(date +'%Y-%m-%d@%H:%M:%S')
+    start_time=$(date)
 
     echo -e "\nRunning with ${users} users..."
     ${DOCKER_SCRIPT} -s ${SETUP_SCRIPT} \
@@ -57,17 +57,22 @@ do
                      -c ${users} -r ${HATCH_RATE} --no-web
 
     # end time
-    end_time=$(date +'%Y-%m-%d@%H:%M:%S')
+    end_time=$(date)
 
     echo "START time: ${start_time}"
     echo "  END time: ${end_time}"
 
     # moodle stats
+    s_time=$(date -d "$start_time" '+%Y-%m-%d@%H:%M:%S')
+    e_time=$(date -d "$end_time" '+%Y-%m-%d@%H:%M:%S')
     collect_stats "http://${WEB_SERVER_HOSTNAME}:8086" ${OUTPUT_FOLDER}/${users}/moodle \
-            ${start_time} ${end_time} host-stats.conf
+            ${s_time} ${e_time} host-stats.conf
+
     # omero stats
+#    s_time=$(date -d "$start_time -1 hours" '+%Y-%m-%d@%H:%M:%S')
+#    e_time=$(date -d "$end_time -1 hours" '+%Y-%m-%d@%H:%M:%S')
 #    collect_stats "http://${IMAGE_SERVER_HOSTNAME}:8086" ${OUTPUT_FOLDER}/${users}/omero \
-#            ${start_time} ${end_time} host-stats.conf
+#            ${s_time} ${e_time} host-stats.conf
 
     # wait for next test
     if [[ ${users} != ${USERS[*]: -1} ]]; then
