@@ -12,7 +12,8 @@ DATASET="../../tests/datasets/dev"
 
 # default mode
 MODE="--rm"
-MASTER_MODE="false"
+MASTER_MODE=""
+MASTER_PORT="15557"
 
 # default docker container name
 DOCKER_CONTAINER_HOSTNAME="$(hostname)"
@@ -111,7 +112,11 @@ while [ -n "$1" ]; do
                                 shift
                                 ;;
                         --master )
-                                MASTER_MODE="true"
+                                MASTER_MODE="--master"
+                                ;;
+                        --master-bind-port=* )
+                                MASTER_PORT="${OPT#*=}"
+                                shift
                                 ;;
                         # volume name
                         --volume )
@@ -181,8 +186,8 @@ DATASET_FOLDER="$( cd ${DATASET} && pwd )"
 DATASET=$(basename ${DATASET})
 
 MASTER_PORTS=""
-if [[ ${MASTER_MODE} == "true" ]]; then
-    MASTER_PORTS="-p 15557:5557 -p 15558:5558"
+if [[ ${MASTER_MODE} == "--master" ]]; then
+    MASTER_PORTS="-p $(($MASTER_PORT)):5557 -p $((MASTER_PORT+1)):5558"
 fi
 
 # output folder initialization
@@ -216,5 +221,5 @@ docker run ${MODE} ${VOLUME_OPTS} ${ENV_CONFIG_FILE} \
     -p "18089:8089"  \
     -p "18090:10000" \
     ${IMAGE_NAME} \
-    -w ${WEB_APP_ADDRESS} -f ${LOCUST_SCRIPT} ${OTHER_OPTS} \
+    -w ${WEB_APP_ADDRESS} -f ${LOCUST_SCRIPT} ${OTHER_OPTS} ${MASTER_MODE} \
     -s "/scripts/${SETUP_SCRIPT}" "/dataset"
