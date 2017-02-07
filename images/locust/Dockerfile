@@ -51,7 +51,7 @@ RUN mkdir -p /home/tester/
 WORKDIR /home/tester/
 
 # Expose ports
-EXPOSE 8025 8083 8086 8088 8089
+EXPOSE 8025 8083 8086 8088 8089 5557 5558
 
 # update entrypoint
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

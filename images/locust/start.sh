@@ -12,6 +12,7 @@ DATASET="../../tests/datasets/dev"
 
 # default mode
 MODE="--rm"
+MASTER_MODE="false"
 
 # default docker container name
 DOCKER_CONTAINER_HOSTNAME="$(hostname)"
@@ -109,6 +110,9 @@ while [ -n "$1" ]; do
                                 SETUP_SCRIPT="$2"
                                 shift
                                 ;;
+                        --master )
+                                MASTER_MODE="true"
+                                ;;
                         # volume name
                         --volume )
                                 VOLUME_NAME="$2"
@@ -176,12 +180,18 @@ fi
 DATASET_FOLDER="$( cd ${DATASET} && pwd )"
 DATASET=$(basename ${DATASET})
 
+MASTER_PORTS=""
+if [[ ${MASTER_MODE} == "true" ]]; then
+    MASTER_PORTS="-p 15557:5557 -p 15558:5558"
+fi
+
 # output folder initialization
 mkdir -p ${OUTPUT_FOLDER}
 OUTPUT_FOLDER="$( cd ${OUTPUT_FOLDER} && pwd )"
 
 echo -e "Configuration..."
 echo -e " - Mode: ${MODE}"
+echo -e " - Master Mode: ${MASTER_MODE}"
 echo -e " - Volume name: ${VOLUME_NAME}"
 echo -e " - Volume disabled: ${NO_VOLUME}"
 echo -e " - Locust options: ${OTHER_OPTS}"
@@ -199,7 +209,7 @@ docker run ${MODE} ${VOLUME_OPTS} ${ENV_CONFIG_FILE} \
     -v ${DATASET_FOLDER}:"/dataset" \
     -v ${SETUP_SCRIPT_FOLDER}:"/scripts" \
     -v ${OUTPUT_FOLDER}:"/results" \
-    -h ${DOCKER_CONTAINER_HOSTNAME} \
+    -h ${DOCKER_CONTAINER_HOSTNAME} ${MASTER_PORTS} \
     -p "18086:8086"  \
     -p "18083:8083"  \
     -p "18088:8088"  \
