@@ -1,0 +1,37 @@
+log:
+  level: "INFO"
+
+dataset:
+  folder: ../../
+
+users:
+  # default filename containing test users
+  filename: users.csv
+  # default user prefix
+  prefix: testuser
+  # default user cohort
+  cohort: test_users
+
+questions:
+  filename: "questions.csv"
+  navigation: "low"
+  questions_per_user: 1
+  think_time_per_level: 0
+  think_time_before_question: 4
+  random_choice: False
+  multithreading: False
+
+http:
+  codes: [200,300,301,302,303,304,400,401,403,404,405,406,408,500]
+
+statsd:
+  server_host: localhost
+  server_port: 8125
+
+oauth:
+  enabled: True
+  client_id: <YOUR_CLIENT_ID>
+  client_secret: <YOUR_CLIENT_SECRET>
+
+image_server:
+  api: OmeSeadragonGateway

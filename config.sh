@@ -11,15 +11,19 @@ export SHARED_LOG="${SHARED_HOST_FOLDER}/log"
 export SHARED_DATA="${SHARED_HOST_FOLDER}/data"
 
 # MySQL Configurations
+export MYSQL_HOST=$(hostname)
 export MYSQL_ALLOW_EMPTY_PASSWORD="yes"
+export MYSQL_ROOT_USER="root"
 export MYSQL_ROOT_PASSWORD="moodle"
 export MYSQL_DATABASE="moodle"
 export MYSQL_USER="moodle"
 export MYSQL_PASSWORD="moodle"
 export MYSQL_DATADIR="/var/lib/mysql"
 export SHARED_MYSQL_DATADIR="${SHARED_DATA}/mysql"
+export LOAD_TEST_DB="load_tests"
 
 # Moodle Configuration
+export MOODLE_HOST=$(hostname)
 export APACHE_WWW_ROOT="/var/www/html"
 export MOODLE_WWW_ROOT="${APACHE_WWW_ROOT}/moodle"
 export MOODLE_DATA_DIR="/var/www/moodledata"
@@ -44,6 +48,7 @@ export DOCKERHUB_REPOSITORY="crs4"
 export DOCKERHUB_MYSQL_IMAGE="moodle-mysql"
 export DOCKERHUB_APACHE_IMAGE="moodle-apache-php"
 export DOCKERHUB_DROPBOX_IMAGE="moodle-dropbox"
+export DOCKERHUB_LOCUST_IMAGE="locust"
 
 # BACKUP folder
 export MYSQL_BACKUPS_DIR="${CURRENT_PATH}/Backups"

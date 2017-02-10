@@ -8,14 +8,19 @@ RUN apt-get update
 
 # Install Apache/MySQL/PHP and additional Software
 RUN apt-get update \
-    && apt-get -y install \
+    && apt-get -y --force-yes install \
        apache2 mysql-client php5 git-core nodejs-legacy npm \
-       graphviz aspell php5-pspell \
+       graphviz aspell php5-pspell nano \
        php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap clamav \
     && apt-get clean
+	
+# Add git info of the current Git Repository
+COPY gitinfo.sh /usr/local/bin
+RUN cat /usr/local/bin/gitinfo.sh >> ~/.bashrc
 
 # update apache configuration
 RUN echo "ServerName localhost" >>  /etc/apache2/apache2.conf
+RUN echo "<Location \"/server-status\">\n\tSetHandler server-status\n\t#Require host example.com\n\tRequire all granted\n</Location>" >>  /etc/apache2/apache2.conf
 
 # Install GRUNT plugins
 RUN npm install -g grunt-cli

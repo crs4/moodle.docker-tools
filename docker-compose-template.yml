@@ -12,7 +12,7 @@ mysql:
   hostname: mysql
   restart: always
   ports:
-    - "4306:3306"
+    - "3306:3306"
 
 
 # apache web server with PHP and grunt installed
