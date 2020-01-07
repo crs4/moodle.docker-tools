@@ -23,11 +23,11 @@ log "Generating '${compose_generated-compose}' file... DONE"
 
 #build the required certificates
 log "\nGenerating certificates..."
-if [[ ! -d $${CERTS_PATH} ]]; then
-    mkdir -p $${CERTS_PATH} 
+if [[ ! -d ${CERTS_PATH} ]]; then
+    mkdir -p ${CERTS_PATH} 
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-                -keyout $${CERTS_PATH}/apache.key \
-                -out $${CERTS_PATH}/apache.crt; \
+                -keyout ${CERTS_PATH}/apache.key \
+                -out ${CERTS_PATH}/apache.crt; \
 fi
 log "Generating certificates... DONE"
 
