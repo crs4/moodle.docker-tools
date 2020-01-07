@@ -16,9 +16,7 @@ RUN apt-get update \
 
 # Install Python libraries
 RUN pip install --upgrade pip \
-    && pip install locustio \
-    && pip install ipython \
-    && pip install jupyter
+    && python -m pip install locustio --ignore-installed pyzmq
 
 # Copy supervisor configuration
 COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
