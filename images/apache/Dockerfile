@@ -23,7 +23,7 @@ RUN echo "ServerName localhost" >>  /etc/apache2/apache2.conf
 RUN echo "<Location \"/server-status\">\n\tSetHandler server-status\n\t#Require host example.com\n\tRequire all granted\n</Location>" >>  /etc/apache2/apache2.conf
 
 # Install GRUNT plugins
-RUN npm install -g grunt-cli
+RUN npm config set strict-ssl false && npm install -g grunt-cli
 
 # Update the PHP.ini file, enable <? ?> tags and quieten logging.
 RUN sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php5/apache2/php.ini
