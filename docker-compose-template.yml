@@ -35,4 +35,10 @@ apache:
     - 8.8.8.8
     # add other DNS if you need
 
-
+# Init container
+init:
+  image: ${DOCKERHUB_REPOSITORY}/moodle-init
+  environment:
+    MOODLE_WWW_ROOT: ${MOODLE_WWW_ROOT}
+  volumes:
+    - ${WWW_VOLUME}:${APACHE_WWW_ROOT}
