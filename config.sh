@@ -48,7 +48,7 @@ fi
 export SSH_KEY_PATH=$SSH_KEY
 
 # DOCKER IMAGE SETTINGS
-export DOCKER_VOLUME_PREFIX="moodle-docker-"
+export DOCKER_VOLUME_PREFIX="omemoodle-"
 export DOCKERHUB_REPOSITORY="crs4"
 export DOCKERHUB_MYSQL_IMAGE="moodle-mysql"
 export DOCKERHUB_APACHE_IMAGE="moodle-apache-php"
@@ -57,3 +57,31 @@ export DOCKERHUB_LOCUST_IMAGE="locust"
 
 # BACKUP folder
 export MYSQL_BACKUPS_DIR="${CURRENT_PATH}/Backups"
+
+#############################################################################
+# Configure Docker volumes
+#############################################################################
+MYSQL_VOLUME="${DOCKER_VOLUME_PREFIX}mysql-data"
+WWW_VOLUME="${DOCKER_VOLUME_PREFIX}www-root"
+MOODLE_DATA_VOLUME="${DOCKER_VOLUME_PREFIX}moodle-data"
+MOODLE_LOG_VOLUME="${DOCKER_VOLUME_PREFIX}moodle-log"
+# use host paths if configured
+if [[ -n "${SHARED_HOST_FOLDER}" ]]; then
+  if [[ "${ENABLE_MYSQL_VOLUME}" !=  "true" ]]; then
+    MYSQL_VOLUME="${HOST_MYSQL_DATADIR}"
+  fi
+  if [[ "${ENABLE_WWW_VOLUME}" !=  "true" ]]; then
+    WWW_VOLUME="${HOST_WWW_ROOT}"
+  fi  
+  if [[ "${ENABLE_MOODLE_DATA_VOLUME}" !=  "true" ]]; then
+    MOODLE_DATA_VOLUME="${HOST_MOODLE_DATA_DIR}"
+  fi
+  if [[ "${ENABLE_MOODLE_LOG_VOLUME}" !=  "true" ]]; then
+    MOODLE_LOG_VOLUME="${HOST_MOODLE_LOG_DIR}"
+  fi
+fi
+# exports volumes
+export MYSQL_VOLUME
+export WWW_VOLUME
+export MOODLE_DATA_VOLUME
+export MOODLE_LOG_VOLUME
