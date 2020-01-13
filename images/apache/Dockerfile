@@ -43,13 +43,22 @@ COPY certs/apache.crt /etc/apache2/ssl/apache.crt
 
 # Moodle Env
 ENV MOODLE_VERSION MOODLE_29_STABLE
-ENV MOODLE_WWW_ROOT ${WWW_ROOT}/moodle
-ENV MOODLE_DATA_DIR /var/www/moodledata
+ENV MOODLE_SRC "/opt/moodle"
+ENV MOODLE_WWW_ROOT "${WWW_ROOT}/moodle"
+ENV MOODLE_DATA_DIR "/var/www/moodledata"
 
-# Clone Moodle
-COPY moodle /opt/moodle
-RUN cd /opt/moodle \
-    && git checkout ${MOODLE_VERSION}
+# Copy Moodle source
+COPY moodle ${MOODLE_SRC}
+
+### Add scripts ###
+ADD scripts/start-services.sh /usr/local/bin/start-services
+ADD scripts/install-omero-modules.sh ${MOODLE_SRC}/install-omero-modules.sh
+RUN chmod +x /usr/local/bin/start-services ${MOODLE_SRC}/install-omero-modules.sh
+
+# Checkout the proper Moodle version and install omero plugins
+RUN cd ${MOODLE_SRC} \
+    && git checkout ${MOODLE_VERSION} \
+    && ${MOODLE_SRC}/install-omero-modules.sh
 
 # download grunt requirements
 RUN cd /opt/moodle \
@@ -68,9 +77,6 @@ RUN mkdir -p ${MOODLE_DATA_DIR}
 RUN chown -R www-data ${MOODLE_DATA_DIR}
 RUN chmod -R 777 ${MOODLE_DATA_DIR}
 
-### Global scripts ###
-ADD scripts/start-services.sh /usr/local/bin/start-services
-RUN chmod +x /usr/local/bin/start-services
 
 # set timezone
 RUN echo Europe/Rome > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
