@@ -18,8 +18,6 @@ mysql:
 # Apache web server with PHP, grunt and Moodle + Omero modules
 apache:
   image: ${DOCKERHUB_REPOSITORY}/${DOCKERHUB_APACHE_IMAGE}
-  environment:
-    SSH_KEY_PATH: ${SSH_KEY_PATH}
   volumes:
     - ${WWW_VOLUME}:${APACHE_WWW_ROOT}
     - ${MOODLE_DATA_VOLUME}:${MOODLE_DATA_DIR}

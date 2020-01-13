@@ -40,13 +40,6 @@ export MOODLE_LOG_DIR="/var/log/apache2"
 # certs Path
 export CERTS_PATH=images/apache/certs
 
-  #--> SSH KEY <--
-SSH_KEY="${HOME}/.ssh/id_dsa.pub"
-if [[ ! -f ${SSH_KEY} ]]; then
-	SSH_KEY="${HOME}/.ssh/id_rsa.pub"
-fi
-export SSH_KEY_PATH=$SSH_KEY
-
 # DOCKER IMAGE SETTINGS
 export DOCKER_VOLUME_PREFIX="omemoodle-"
 export DOCKERHUB_REPOSITORY="crs4"
