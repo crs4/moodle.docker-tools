@@ -15,11 +15,7 @@ function log() {
 }
 
 # generate the 'docker-compose' file
-compose_template="docker-compose-template.yml"
-compose_generated="docker-compose.yml"
-log "\nGenerating '${compose_generated-compose}' file..."
-envsubst < "${compose_template}" > "${compose_generated}"
-log "Generating '${compose_generated-compose}' file... DONE"
+${current_path}/generate-docker-compose-file.sh
 
 #build the required certificates
 log "\nGenerating certificates..."
@@ -40,4 +36,7 @@ cd "${current_path}/images/apache" \
         && ./build_image.sh ${DOCKERHUB_REPOSITORY} ${DOCKERHUB_APACHE_IMAGE}
 cd "${current_path}/images/locust" \
         && ./build_image.sh ${DOCKERHUB_REPOSITORY} ${DOCKERHUB_LOCUST_IMAGE}
+cd "${current_path}/images/init" \
+        && ./build_image.sh #${DOCKERHUB_REPOSITORY} ${DOCKERHUB_LOCUST_IMAGE}
+
 log "Generating Docker images... DONE"
