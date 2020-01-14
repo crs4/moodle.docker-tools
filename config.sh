@@ -2,8 +2,14 @@
 
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Load settings
-source "${CURRENT_PATH}/settings.sh"
+# Root host path to store container data
+#export SHARED_HOST_FOLDER="${HOME}/OmeMoodleDocker"
+
+# Enable/Disable data volumes
+export ENABLE_MYSQL_VOLUME="true"
+export ENABLE_WWW_VOLUME="true"
+export ENABLE_MOODLE_DATA_VOLUME="true"
+export ENABLE_MOODLE_LOG_VOLUME="true"
 
 #############################################################################
 # Paths on the SHARED_HOST_FOLDER
