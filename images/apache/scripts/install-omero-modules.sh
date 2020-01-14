@@ -50,6 +50,9 @@ do
 	if [[ ${PRESERVE_HISTORY} = false ]]; then
 		rm -Rf ${MODULE_TARGET_FOLDER}/.git
 	fi
+	if [[ -f ${MODULE_TARGET_FOLDER}/register.sh ]]; then
+		${MODULE_TARGET_FOLDER}/register.sh
+	fi
 	popd	
 done
 

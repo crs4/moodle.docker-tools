@@ -57,17 +57,14 @@ RUN chmod +x /usr/local/bin/start-services ${MOODLE_SRC}/install-omero-modules.s
 
 # Checkout the proper Moodle version and install omero plugins
 RUN cd ${MOODLE_SRC} \
-    && git checkout ${MOODLE_VERSION} \
+    && git checkout ${MOODLE_VERSION} \        
+    && npm install grunt --save-dev \
+    && npm install grunt-contrib-uglify --save-dev \
+    && npm install grunt-contrib-jshint --save-dev \
+    && npm install grunt-contrib-less --save-dev \
+    && npm install grunt-contrib-watch --save-dev \
+    && npm install shifter --save-dev \
     && ${MOODLE_SRC}/install-omero-modules.sh
-
-# download grunt requirements
-RUN cd /opt/moodle \
-  && npm install grunt --save-dev \
-  && npm install grunt-contrib-uglify --save-dev \
-  && npm install grunt-contrib-jshint --save-dev \
-  && npm install grunt-contrib-less --save-dev \
-  && npm install grunt-contrib-watch --save-dev \
-  && npm install shifter --save-dev
 
 # set user permissions
 RUN usermod -u 1000 www-data
