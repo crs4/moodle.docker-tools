@@ -1,14 +1,17 @@
 #!/bin/bash
 
+# Moodle path
+MOODLE_ROOT=${1:-"/opt/moodle"}
+
 # paths
 CURRENT_DIR=$(pwd)
 MOODLE_PACKAGES_FOLDER=/tmp/moodle-packages # temp folder where Moodle packages are downloaded
-export MOODLE_WWW=$(source config.sh && echo ${SHARED_MOODLE_WWW_ROOT};)
+export MOODLE_WWW=${MOODLE_ROOT}
 
 # github settings
-GITHUB_USER="kikkomep"
-BRANCH="develop"
-USE_SSH=true
+GITHUB_USER="crs4"
+BRANCH="master"
+USE_SSH=false
 PRESERVE_HISTORY=true
 
 # build github prefix & suffix
@@ -34,14 +37,13 @@ do
 	TARGET=${TARGETS[${i}]}
 	GITHUB_REPOSITORY=${GITHUB_REPOSITORY_PREFIX}${MODULE}${GITHUB_REPOSITORY_SUFFIX}
 	MODULE_TEMP_FOLDER=${MOODLE_PACKAGES_FOLDER}/${MODULE}
-	MODULE_TARGET_FOLDER=${MOODLE_WWW}/${TARGET}
+	MODULE_TARGET_FOLDER=${MOODLE_ROOT}/${TARGET}
 	if [[ ! -d "${MODULE_TEMP_FOLDER}" ]]; then
 		echo "Cloning the 'moodle.${MODULE}' module"
 		git clone ${GITHUB_REPOSITORY} ${MODULE_TEMP_FOLDER}
-		git fetch
 	fi
 	echo "Updating the 'moodle.${MODULE}' module ..."
-	cd ${MODULE_TEMP_FOLDER}
+	pushd ${MODULE_TEMP_FOLDER}
 	git checkout ${BRANCH}
 	git pull origin ${BRANCH}
 	rsync -avt ${MODULE_TEMP_FOLDER}/ ${MODULE_TARGET_FOLDER}
@@ -51,4 +53,8 @@ do
 	if [[ -f ${MODULE_TARGET_FOLDER}/register.sh ]]; then
 		${MODULE_TARGET_FOLDER}/register.sh
 	fi
+	popd	
 done
+
+# remove temp directory
+rm -Rf ${MOODLE_PACKAGES_FOLDER}
