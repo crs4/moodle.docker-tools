@@ -1,32 +1,27 @@
 # MySQL database
 mysql:
-  image: {{DOCKERHUB_REPOSITORY}}/{{DOCKERHUB_MYSQL_IMAGE}}
+  image: ${DOCKERHUB_REPOSITORY}/${DOCKERHUB_MYSQL_IMAGE}
   environment:
-    MYSQL_ROOT_PASSWORD: {{MYSQL_ROOT_PASSWORD}}
-    MYSQL_DATADIR: {{MYSQL_DATADIR}}
-    MYSQL_DATABASE: {{MYSQL_DATABASE}}
-    MYSQL_USER: {{MYSQL_USER}}
-    MYSQL_PASSWORD: {{MYSQL_PASSWORD}}
+    MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    MYSQL_DATADIR: ${MYSQL_DATADIR}
+    MYSQL_DATABASE: ${MYSQL_DATABASE}
+    MYSQL_USER: ${MYSQL_USER}
+    MYSQL_PASSWORD: ${MYSQL_PASSWORD}
   volumes:
-    - {{DOCKER_VOLUME_PREFIX}}mysql-data:{{MYSQL_DATADIR}}
+    - ${MYSQL_VOLUME}:${MYSQL_DATADIR}
   hostname: mysql
   restart: always
   ports:
     - "3306:3306"
 
 
-# apache web server with PHP and grunt installed
+# Apache web server with PHP, grunt and Moodle + Omero modules
 apache:
-  image: {{DOCKERHUB_REPOSITORY}}/{{DOCKERHUB_APACHE_IMAGE}}
-  environment:
-    SSH_KEY_PATH: {{SSH_KEY_PATH}}
-    SHARED_MOODLE_WWW_ROOT: {{SHARED_MOODLE_WWW_ROOT}}
-    SHARED_MOODLE_DATA_DIR: {{SHARED_MOODLE_DATA_DIR}}
+  image: ${DOCKERHUB_REPOSITORY}/${DOCKERHUB_APACHE_IMAGE}
   volumes:
-    # uncomment to store data in a local shared folder
-    - {{SHARED_WWW}}:{{APACHE_WWW_ROOT}}
-    - {{DOCKER_VOLUME_PREFIX}}moodle-data:{{MOODLE_DATA_DIR}}
-    - {{DOCKER_VOLUME_PREFIX}}moodle-logs:{{MOODLE_LOG_DIR}}
+    - ${WWW_VOLUME}:${APACHE_WWW_ROOT}
+    - ${MOODLE_DATA_VOLUME}:${MOODLE_DATA_DIR}
+    - ${MOODLE_LOG_VOLUME}:${MOODLE_LOG_DIR}
   hostname: moodle
   restart: always
   links:
@@ -34,8 +29,13 @@ apache:
   ports:
     - "80:80"
     - "443:443"
-  dns:
-    - 8.8.8.8
-    # add other DNS if you need
+#  dns:
+#    - 8.8.8.8
 
-
+# Init container
+init:
+  image: ${DOCKERHUB_REPOSITORY}/moodle-init
+  environment:
+    MOODLE_WWW_ROOT: ${MOODLE_WWW_ROOT}
+  volumes:
+    - ${WWW_VOLUME}:${APACHE_WWW_ROOT}

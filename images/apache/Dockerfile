@@ -23,7 +23,7 @@ RUN echo "ServerName localhost" >>  /etc/apache2/apache2.conf
 RUN echo "<Location \"/server-status\">\n\tSetHandler server-status\n\t#Require host example.com\n\tRequire all granted\n</Location>" >>  /etc/apache2/apache2.conf
 
 # Install GRUNT plugins
-RUN npm install -g grunt-cli
+RUN npm config set strict-ssl false && npm install -g grunt-cli
 
 # Update the PHP.ini file, enable <? ?> tags and quieten logging.
 RUN sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php5/apache2/php.ini
@@ -43,22 +43,28 @@ COPY certs/apache.crt /etc/apache2/ssl/apache.crt
 
 # Moodle Env
 ENV MOODLE_VERSION MOODLE_29_STABLE
-ENV MOODLE_WWW_ROOT ${WWW_ROOT}/moodle
-ENV MOODLE_DATA_DIR /var/www/moodledata
+ENV MOODLE_SRC "/opt/moodle"
+ENV MOODLE_WWW_ROOT "${WWW_ROOT}/moodle"
+ENV MOODLE_DATA_DIR "/var/www/moodledata"
 
-# Clone Moodle
-COPY moodle /opt/moodle
-RUN cd /opt/moodle \
-    && git checkout ${MOODLE_VERSION}
+# Copy Moodle source
+COPY moodle ${MOODLE_SRC}
 
-# download grunt requirements
-RUN cd /opt/moodle \
-  && npm install grunt --save-dev \
-  && npm install grunt-contrib-uglify --save-dev \
-  && npm install grunt-contrib-jshint --save-dev \
-  && npm install grunt-contrib-less --save-dev \
-  && npm install grunt-contrib-watch --save-dev \
-  && npm install shifter --save-dev
+### Add scripts ###
+ADD scripts/start-services.sh /usr/local/bin/start-services
+ADD scripts/install-omero-modules.sh ${MOODLE_SRC}/install-omero-modules.sh
+RUN chmod +x /usr/local/bin/start-services ${MOODLE_SRC}/install-omero-modules.sh
+
+# Checkout the proper Moodle version and install omero plugins
+RUN cd ${MOODLE_SRC} \
+    && git checkout ${MOODLE_VERSION} \        
+    && npm install grunt --save-dev \
+    && npm install grunt-contrib-uglify --save-dev \
+    && npm install grunt-contrib-jshint --save-dev \
+    && npm install grunt-contrib-less --save-dev \
+    && npm install grunt-contrib-watch --save-dev \
+    && npm install shifter --save-dev \
+    && ${MOODLE_SRC}/install-omero-modules.sh
 
 # set user permissions
 RUN usermod -u 1000 www-data
@@ -68,9 +74,6 @@ RUN mkdir -p ${MOODLE_DATA_DIR}
 RUN chown -R www-data ${MOODLE_DATA_DIR}
 RUN chmod -R 777 ${MOODLE_DATA_DIR}
 
-### Global scripts ###
-ADD scripts/start-services.sh /usr/local/bin/start-services
-RUN chmod +x /usr/local/bin/start-services
 
 # set timezone
 RUN echo Europe/Rome > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
